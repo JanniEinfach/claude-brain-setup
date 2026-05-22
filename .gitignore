@@ -1,0 +1,58 @@
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V4
+.Trashes
+Thumbs.db
+desktop.ini
+
+# Windows
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Secrets and credentials
+.env
+.env.*
+*.key
+*.secret
+*.pem
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Backups created by install.sh and setup.sh
+*.backup
+*.bak
+CLAUDE.md.backup*
+
+# Generated output
+generated/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local overrides
+settings.local.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+
+# Editor
+.idea/
+.vscode/

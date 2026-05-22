@@ -104,7 +104,7 @@ This skill is a release checklist. Load it once per release. Cost: roughly 75 to
 
 After publishing, clone the repository from scratch in a fresh directory and run the install:
 ```bash
-git clone https://github.com/yourname/claude-brain-setup.git /tmp/brain-verify
+git clone https://github.com/your-username/claude-brain-setup.git /tmp/brain-verify
 cd /tmp/brain-verify
 bash -n scripts/install.sh
 bash scripts/install.sh --target /tmp/brain-verify-home

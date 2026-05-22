@@ -45,7 +45,17 @@ Skills live in `~/.claude/skills/`. Load one with `/skill-name` inside a Claude 
 
 Only load a skill when you actually need it. Loading skills speculatively wastes tokens.
 
-Core skills:
+Bundled Brain skills (install with `setup.sh` or `./scripts/install.sh --with-skills`):
+- `/brain-core-workflow` — disciplined development workflow
+- `/brain-token-discipline` — token-efficient working habits
+- `/brain-session-handoff` — session handoff before model switch or end
+- `/brain-security-review` — security checklist for code and repos
+
+Optional bundled skills:
+- `/brain-marketing-support` — sales/marketing copy (enable in setup)
+- `/brain-fivem-development` — FiveM script development (enable in setup)
+
+Core external skills (require ECC skill collection):
 - `/debug` — systematic bug investigation
 - `/tdd` — test-first workflow
 - `/review` — code quality review

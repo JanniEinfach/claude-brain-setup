@@ -130,11 +130,50 @@ claude --model claude-opus-4-7
 # Start a new session with the right model, paste the handoff
 ```
 
+## Bundled Brain Skills
+
+This repository includes 13 ready-to-use Brain skills that install directly to `~/.claude/skills/`. They are portable Markdown instruction files — no code executes automatically. Claude Code reads them as context when you load a skill with `/skill-name` during a session.
+
+| Skill | Purpose |
+|-------|---------|
+| `brain-core-workflow` | Disciplined six-step development workflow |
+| `brain-token-discipline` | Habits that reduce token usage without losing quality |
+| `brain-model-routing` | Choosing the right model before a session starts |
+| `brain-karpathy-principles` | Engineering discipline: think before coding, simplicity, surgical changes |
+| `brain-security-review` | Security checklist for code and repositories |
+| `brain-cross-platform-setup` | Validate scripts work on Linux, macOS, and Windows |
+| `brain-session-handoff` | Structured handoff before ending a large session or switching models |
+| `brain-pr-review` | PR review checklist for this repository |
+| `brain-ruflo-orchestration` | When and how to use multi-agent workflows |
+| `brain-skill-authoring` | Guide for writing new bundled Brain skills |
+| `brain-github-release` | Checklist for preparing a public GitHub release |
+| `brain-marketing-support` | Writing guidance for sales, marketing, and SEO copy (optional) |
+| `brain-fivem-development` | FiveM Lua scripting, NUI, and framework guidance (optional) |
+
+Install bundled skills on **Linux / macOS**:
+
+```bash
+./scripts/install.sh --with-skills
+# or during interactive setup:
+./scripts/setup.sh
+```
+
+Install bundled skills on **Windows PowerShell**:
+
+```powershell
+.\scripts\install.ps1 -WithSkills
+# or during interactive setup:
+.\scripts\setup.ps1
+```
+
+The interactive setup script (`setup.sh` / `setup.ps1`) will ask whether to install bundled skills as part of its standard flow. You can always install them separately later with `--with-skills` / `-WithSkills`.
+
 ## Security Notes
 
 - The install script never deletes files. It only copies and backs up.
 - No secrets, API keys, or tokens belong in `CLAUDE.md` or `settings.json`.
 - `settings.example.json` contains read-only shell permissions by default. Review before using.
+- Bundled skills are Markdown files only. They do not run code automatically.
 - See `docs/SECURITY.md` for the full security guide.
 
 ## File Structure
@@ -156,6 +195,20 @@ claude-brain-setup/
 │   ├── setup.sh                  — interactive personalized setup (Linux/macOS)
 │   ├── install.ps1               — quick non-interactive installer (Windows)
 │   └── setup.ps1                 — interactive personalized setup (Windows)
+├── skills/                       — bundled Brain skills (13 included)
+│   ├── brain-core-workflow/
+│   ├── brain-token-discipline/
+│   ├── brain-model-routing/
+│   ├── brain-karpathy-principles/
+│   ├── brain-security-review/
+│   ├── brain-cross-platform-setup/
+│   ├── brain-session-handoff/
+│   ├── brain-pr-review/
+│   ├── brain-ruflo-orchestration/
+│   ├── brain-skill-authoring/
+│   ├── brain-github-release/
+│   ├── brain-marketing-support/
+│   └── brain-fivem-development/
 └── docs/
     ├── ONBOARDING_QUESTIONS.md   — all 15 setup questions explained
     ├── MODEL_ROUTING.md          — how to pick the right model

@@ -103,6 +103,24 @@ Before submitting a pull request, confirm:
 4. Add the substitution logic in both `setup.sh` and `setup.ps1`.
 5. Document the new question in `docs/ONBOARDING_QUESTIONS.md` following the existing format.
 
+## How to Add a Bundled Skill
+
+Bundled Brain skills live in `skills/<brain-skill-name>/SKILL.md`. They are portable instruction files included with this repository.
+
+Rules for new bundled skills:
+
+1. Follow the naming convention: `brain-<topic>`
+2. Create `skills/brain-<topic>/SKILL.md`
+3. Include all required sections in order: Purpose, When to Use, When Not to Use, Workflow, Checklist, Token Discipline, Verification, Public Safety Notes
+4. Keep the file under 200 lines (target 80–150)
+5. No private data: no absolute machine-specific paths, no credentials, no internal hostnames
+6. No false capability claims (see Contribution Rules above)
+7. The Verification section must contain a concrete, testable check
+
+See `skills/brain-skill-authoring/SKILL.md` for the full guide.
+
+Before submitting a PR with a new skill, run the security sweep from the Validation Checks section and confirm no private data appears.
+
 ## Updating the Skills List
 
 The skills list in `docs/SKILLS.md` should only include skills that actually exist. To verify:

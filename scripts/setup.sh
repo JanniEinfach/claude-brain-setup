@@ -316,6 +316,15 @@ case "$Q15" in
 esac
 
 echo ""
+echo "=== Bonus: Bundled Brain Skills ==="
+printf "Install bundled Brain skills to ~/.claude/skills/? [Y/n]: "
+read -r INSTALL_SKILLS_RESP
+case "$INSTALL_SKILLS_RESP" in
+  [nN]) INSTALL_SKILLS="no" ;;
+  *) INSTALL_SKILLS="yes" ;;
+esac
+
+echo ""
 echo "Building your personalized CLAUDE.md..."
 echo ""
 
@@ -560,6 +569,44 @@ rm -f "$TEMP_FILE"
 
 echo ""
 echo "Done! CLAUDE.md written to: $OUTPUT_FILE"
+
+# Install bundled Brain skills if requested
+if [ "$INSTALL_SKILLS" = "yes" ]; then
+  SKILLS_SRC="$PROJECT_ROOT/skills"
+  SKILLS_DEST="$HOME/.claude/skills"
+
+  if [ ! -d "$SKILLS_SRC" ]; then
+    echo ""
+    echo "Warning: skills/ directory not found at $SKILLS_SRC. Skipping skill install."
+    echo "You can install skills later with: ./scripts/install.sh --with-skills"
+  else
+    mkdir -p "$SKILLS_DEST"
+    echo ""
+    echo "Installing bundled Brain skills to: $SKILLS_DEST"
+    INSTALLED_COUNT=0
+    TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+
+    for SKILL_DIR in "$SKILLS_SRC"/*/; do
+      SKILL_NAME="$(basename "$SKILL_DIR")"
+      DEST_SKILL="$SKILLS_DEST/$SKILL_NAME"
+
+      if [ -d "$DEST_SKILL" ]; then
+        mv "$DEST_SKILL" "${DEST_SKILL}.backup_${TIMESTAMP}"
+        echo "  Backed up existing: $SKILL_NAME"
+      fi
+
+      cp -r "$SKILL_DIR" "$DEST_SKILL"
+      echo "  Installed: $SKILL_NAME"
+      INSTALLED_COUNT=$((INSTALLED_COUNT + 1))
+    done
+
+    echo "  Total: $INSTALLED_COUNT skill(s) installed"
+  fi
+else
+  echo ""
+  echo "Skills skipped. Install later with: ./scripts/install.sh --with-skills"
+fi
+
 echo ""
 echo "Next steps:"
 echo "  1. Launch Claude Code with your preferred model:"

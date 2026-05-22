@@ -304,6 +304,16 @@ switch ($q15) {
     default { $OrchestrationLevel = "Balanced" }
 }
 
+# ── Bonus: Bundled Brain Skills ──────────────────────────────────────────────
+Write-Host ""
+Write-Host "=== Bonus: Bundled Brain Skills ==="
+$installSkillsRaw = Read-Host "Install bundled Brain skills to `$HOME\.claude\skills? [Y/n]"
+if ($installSkillsRaw -match '^[nN]') {
+    $InstallSkills = "no"
+} else {
+    $InstallSkills = "yes"
+}
+
 Write-Host ""
 Write-Host "Building your personalized CLAUDE.md..." -ForegroundColor Cyan
 Write-Host ""
@@ -500,6 +510,47 @@ $content | Set-Content $OutputFile -Encoding UTF8
 
 Write-Host ""
 Write-Host "Done! CLAUDE.md written to: $OutputFile" -ForegroundColor Green
+
+# Install bundled Brain skills if requested
+if ($InstallSkills -eq "yes") {
+    $SkillsSrc  = Join-Path $ProjectRoot 'skills'
+    $SkillsDest = Join-Path $env:USERPROFILE '.claude\skills'
+
+    if (-not (Test-Path $SkillsSrc)) {
+        Write-Host ""
+        Write-Host "Warning: skills\ not found at $SkillsSrc. Skipping."
+        Write-Host "Install later with: .\scripts\install.ps1 -WithSkills"
+    } else {
+        if (-not (Test-Path $SkillsDest)) {
+            New-Item -ItemType Directory -Path $SkillsDest -Force | Out-Null
+        }
+        Write-Host ""
+        Write-Host "Installing bundled Brain skills to: $SkillsDest" -ForegroundColor Cyan
+        $Timestamp      = Get-Date -Format 'yyyyMMdd_HHmmss'
+        $InstalledCount = 0
+
+        Get-ChildItem -Path $SkillsSrc -Directory | ForEach-Object {
+            $SkillName = $_.Name
+            $DestSkill = Join-Path $SkillsDest $SkillName
+
+            if (Test-Path $DestSkill) {
+                $BackupName = "${DestSkill}.backup_${Timestamp}"
+                Rename-Item -Path $DestSkill -NewName $BackupName
+                Write-Host "  Backed up existing: $SkillName"
+            }
+
+            Copy-Item -Path $_.FullName -Destination $DestSkill -Recurse
+            Write-Host "  Installed: $SkillName"
+            $InstalledCount++
+        }
+
+        Write-Host "  Total: $InstalledCount skill(s) installed" -ForegroundColor Green
+    }
+} else {
+    Write-Host ""
+    Write-Host "Skills skipped. Install later with: .\scripts\install.ps1 -WithSkills"
+}
+
 Write-Host ""
 Write-Host "Next steps:"
 Write-Host "  1. Launch Claude Code with your preferred model:"

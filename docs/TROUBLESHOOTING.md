@@ -73,9 +73,41 @@ cp ~/CLAUDE.md.backup_20260101_120000 ~/CLAUDE.md
 
 The backup is never deleted.
 
-## Skills are missing
+## Bundled Brain skills did not install
 
-Skills listed in `docs/SKILLS.md` are part of the ECC (Everything Claude Code) skill collection. This project does not bundle skills — it references them.
+Check whether the Brain skills are present:
+
+```bash
+ls ~/.claude/skills/ | grep brain-
+```
+
+If no results, install them:
+
+```bash
+# Linux / macOS
+./scripts/install.sh --with-skills
+
+# Windows PowerShell
+.\scripts\install.ps1 -WithSkills
+```
+
+Also check permissions on the skills directory:
+
+```bash
+ls -la ~/.claude/skills/
+```
+
+If the directory does not exist, create it:
+
+```bash
+mkdir -p ~/.claude/skills/
+```
+
+Then retry the install command above.
+
+## External ECC skills are missing
+
+Skills listed in `docs/SKILLS.md` under the "requires optional ECC skill collection" sections are not bundled with this repository. They reference the ECC (Everything Claude Code) skill collection.
 
 To check if a skill is installed:
 

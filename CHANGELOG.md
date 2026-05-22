@@ -4,6 +4,39 @@ All notable changes to this project will be documented here.
 
 Format: [Semantic Versioning](https://semver.org/). Dates are YYYY-MM-DD.
 
+## [0.4.0] — 2026-05-22
+
+13 bundled Brain skills added; installer updated with skill install flags; documentation restructured.
+
+Added:
+- `skills/brain-core-workflow/SKILL.md` — disciplined six-step development workflow
+- `skills/brain-token-discipline/SKILL.md` — token-efficient working habits
+- `skills/brain-model-routing/SKILL.md` — model selection guide before session start
+- `skills/brain-karpathy-principles/SKILL.md` — think before coding, simplicity, surgical changes
+- `skills/brain-security-review/SKILL.md` — security checklist for code and repositories
+- `skills/brain-cross-platform-setup/SKILL.md` — script validation across Linux, macOS, Windows
+- `skills/brain-session-handoff/SKILL.md` — structured handoff before ending or switching sessions
+- `skills/brain-pr-review/SKILL.md` — PR review checklist for this repository
+- `skills/brain-ruflo-orchestration/SKILL.md` — when and how to use multi-agent workflows
+- `skills/brain-skill-authoring/SKILL.md` — guide for writing new bundled Brain skills
+- `skills/brain-github-release/SKILL.md` — checklist for preparing a public GitHub release
+- `skills/brain-marketing-support/SKILL.md` — sales, marketing, and SEO copy guidance (optional)
+- `skills/brain-fivem-development/SKILL.md` — FiveM Lua, NUI, and framework guidance (optional)
+
+Updated:
+- `scripts/install.sh`: added `--with-skills` and `--skills-only` flags
+- `scripts/setup.sh`: added bundled skill install prompt after setup questions
+- `scripts/install.ps1`: added `-WithSkills` and `-SkillsOnly` parameters
+- `scripts/setup.ps1`: added bundled skill install prompt after setup questions
+- `docs/SKILLS.md`: restructured into Bundled Brain Skills and Optional External Skills sections
+- `docs/SECURITY.md`: added note that bundled skills are Markdown files, not executable code
+- `docs/TROUBLESHOOTING.md`: added entry for bundled skills not installing
+- `CONTRIBUTING.md`: added "How to add a bundled skill" section
+- `README.md`: added Bundled Brain Skills section with table and install commands; updated file structure
+- `CLAUDE.md`: added bundled Brain skills to the skills section
+- `templates/CLAUDE.template.md`: added bundled Brain skills to the skills section
+- `.github/pull_request_template.md`: added bundled skills checklist item
+
 ## [0.3.0] — 2026-05-22
 
 Public release polish: Windows PowerShell support, GitHub community files, engineering principles, and security wording improvements.

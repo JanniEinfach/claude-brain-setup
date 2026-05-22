@@ -59,6 +59,10 @@ If you fork this project, review your CLAUDE.md before pushing to ensure no priv
 
 The interactive setup script (`setup.sh`) collects your answers in shell variables during the session. They are not written to disk in raw form. Only the generated `CLAUDE.md` is saved. If you run `--dry-run`, nothing is written at all.
 
+## Bundled Skills
+
+The bundled Brain skills (in `skills/`) are Markdown instruction files. They do not execute code on their own. They are read by Claude Code as context during a session when you load them with `/skill-name`. Installing a skill is equivalent to copying a Markdown document to your `~/.claude/skills/` directory — nothing runs automatically.
+
 ## Reporting Vulnerabilities
 
 If you find a security issue in this project, please open a GitHub issue with the label `security`. Do not include working exploit code in the issue body. A brief description of the class of vulnerability is enough.

@@ -2,11 +2,47 @@
 
 Skills in `~/.claude/skills/` are loaded on demand with `/skill-name` inside a Claude Code session. Only load a skill when you need it — speculative loading wastes tokens.
 
-The list below was verified against the actual skills directory. Skills marked with a note about public availability may require separate installation; the ones listed here are confirmed to exist in a full ECC (Everything Claude Code) setup.
+## Bundled Brain Skills
+
+These skills are included in this repository and installed by the setup scripts. They are portable, public-safe, and require no external tools beyond bash, python3, git, and Claude Code.
+
+Install them during setup (the interactive questionnaire will ask) or separately:
+
+```bash
+# Linux / macOS
+./scripts/install.sh --with-skills
+
+# Windows PowerShell
+.\scripts\install.ps1 -WithSkills
+```
+
+| Skill | Purpose | Token risk |
+|-------|---------|-----------|
+| `brain-core-workflow` | Disciplined six-step development workflow | Low |
+| `brain-token-discipline` | Habits that reduce token usage without losing quality | Low |
+| `brain-model-routing` | Choosing the right model before a session starts | Low |
+| `brain-karpathy-principles` | Engineering discipline: think before coding, simplicity, surgical changes | Low |
+| `brain-security-review` | Security checklist for code and repositories | Low–Medium |
+| `brain-cross-platform-setup` | Validate scripts work on Linux, macOS, and Windows | Low |
+| `brain-session-handoff` | Structured handoff before ending a large session or switching models | Low |
+| `brain-pr-review` | PR review checklist for this repository | Low |
+| `brain-ruflo-orchestration` | When and how to use multi-agent workflows | Low–Medium |
+| `brain-skill-authoring` | Guide for writing new bundled Brain skills | Low |
+| `brain-github-release` | Checklist for preparing a public GitHub release | Low |
+| `brain-marketing-support` | Writing guidance for sales, marketing, and SEO copy (optional) | Low |
+| `brain-fivem-development` | FiveM Lua scripting, NUI, and framework guidance (optional) | Low–Medium |
+
+Note: `brain-marketing-support` and `brain-fivem-development` are optional. Enable them during setup or load them manually when needed.
+
+## Optional External Skills
+
+The skills below are part of the ECC (Everything Claude Code) skill collection. They are not bundled with this repository. Each is marked `(requires optional ECC skill collection)` to make this clear.
+
+The list below was verified against the actual skills directory in a full ECC setup. Skills requiring a separate install are noted.
 
 ---
 
-## Planning
+## Planning *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -16,7 +52,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `research-external` | External docs, libraries, or APIs | Medium |
 | `system_overview` | Understand an unfamiliar codebase | Medium |
 
-## Debugging
+## Debugging *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -25,7 +61,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `environment-triage` | Env setup or dependency issues | Low |
 | `debug-hooks` | Claude Code hook not firing correctly | Low |
 
-## Implementation
+## Implementation *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -39,7 +75,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `dead-code` | Find unused code before removing | Medium |
 | `migrate` | Migration work (DB, API, framework) | Medium–High |
 
-## Testing
+## Testing *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -51,7 +87,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `ai-regression-testing` | Regression tests for AI/LLM features | Medium |
 | `django-tdd` | TDD patterns for Django | Medium |
 
-## Review and Quality
+## Review and Quality *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -62,7 +98,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `qlty-check` | Quality gate before commit | Low |
 | `qlty-during-development` | Periodic quality check in a session | Low |
 
-## Search and Navigation
+## Search and Navigation *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -75,7 +111,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `tldr-overview` | Project overview via tldr (optional, requires separate install) | Low |
 | `repo-research-analyst` | Deep repository research | High |
 
-## Memory and Session
+## Memory and Session *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -89,7 +125,7 @@ The list below was verified against the actual skills directory. Skills marked w
 
 **Note on `/dream`:** This skill does not automatically edit `CLAUDE.md`. It is a manual tool you run deliberately at the end of a significant session.
 
-## Frontend and Web
+## Frontend and Web *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -99,7 +135,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `imagegen-frontend-mobile` | Mobile UI with image generation | Medium |
 | `frontend-slides` | Slide/presentation UI | Medium |
 
-## Backend and API
+## Backend and API *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -113,7 +149,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `mcp-server-patterns` | Model Context Protocol server development | Low |
 | `postgres-patterns` | PostgreSQL query, schema, migration patterns | Low |
 
-## Git and Release
+## Git and Release *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -122,7 +158,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `describe_pr` | Generate a PR description from a diff | Low |
 | `release` | Release process: versioning, changelog, tags | Low |
 
-## Orchestration
+## Orchestration *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -131,7 +167,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `agent-orchestration` | Full multi-agent coordination | High |
 | `workflow-router` | Route tasks to the right workflow | Low |
 
-## Marketing and Content
+## Marketing and Content *(requires optional ECC skill collection)*
 
 | Skill | When to use | Token risk |
 |-------|-------------|-----------|
@@ -140,7 +176,7 @@ The list below was verified against the actual skills directory. Skills marked w
 | `brandkit` | Brand voice and messaging guidelines | Low |
 | `strategic-compact` | Strategic summary and positioning | Low |
 
-## Verified Agents (in ~/.claude/agents/)
+## Verified Agents (in ~/.claude/agents/) *(requires optional ECC skill collection)*
 
 These agents are confirmed present. Use them via the Task tool for parallel or specialised work.
 

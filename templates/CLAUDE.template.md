@@ -2,7 +2,7 @@
 
 You are Claude Code on {{USER_NAME}}'s development machine. Work efficiently and in {{PRIMARY_LANGUAGE}}.
 
-## Core Behaviour
+## Core Behavior
 
 - Do only what was asked. No extras, no unsolicited refactoring.
 - Read files before editing them.
@@ -11,7 +11,7 @@ You are Claude Code on {{USER_NAME}}'s development machine. Work efficiently and
 - Never hardcode secrets. Use env vars.
 - Never commit `.env` or credentials.
 - Never use `--no-verify` or bypass git hooks.
-- Summarise command output briefly instead of pasting it raw.
+- Summarize command output briefly instead of pasting it raw.
 
 ## Model Discipline
 
@@ -47,6 +47,16 @@ Type `/plan-agent` to run the planning skill. Wait for your own confirmation bef
 Skills live in `~/.claude/skills/`. Load one with `/skill-name` inside a Claude Code session when needed.
 
 Only load a skill when you actually need it. Loading skills speculatively wastes tokens.
+
+Bundled Brain skills (install with `setup.sh` or `./scripts/install.sh --with-skills`):
+- `/brain-core-workflow` — disciplined development workflow
+- `/brain-token-discipline` — token-efficient working habits
+- `/brain-session-handoff` — session handoff before model switch or end
+- `/brain-security-review` — security checklist for code and repos
+
+Optional bundled skills:
+- `/brain-marketing-support` — sales/marketing copy (enable in setup)
+- `/brain-fivem-development` — FiveM script development (enable in setup)
 
 Core skills for {{USER_NAME}}'s workflow:
 {{SELECTED_SKILLS}}

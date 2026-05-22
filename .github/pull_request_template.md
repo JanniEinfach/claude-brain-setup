@@ -8,6 +8,7 @@
 - [ ] Installer / setup script (Linux/macOS)
 - [ ] Windows PowerShell support
 - [ ] Security improvement
+- [ ] Bundled Brain skill (new or modified)
 - [ ] Skill list update
 - [ ] Bug fix
 - [ ] Other: 
@@ -32,3 +33,4 @@
 - [ ] README updated if behavior changes
 - [ ] SECURITY.md updated if install permissions change
 - [ ] CHANGELOG.md updated
+- [ ] Bundled skills: if modified, SKILL.md sections intact, under 200 lines, no private data, no fake capabilities

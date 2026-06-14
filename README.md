@@ -21,7 +21,7 @@ A `CLAUDE.md` system-instruction file plus supporting docs, scripts, and example
 ## Quick Start (3 commands)
 
 ```bash
-git clone https://github.com/yourname/claude-brain-setup.git
+git clone https://github.com/JanniEinfach/claude-brain-setup.git
 cd claude-brain-setup
 ./scripts/install.sh
 ```

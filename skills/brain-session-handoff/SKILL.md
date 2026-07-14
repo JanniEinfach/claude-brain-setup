@@ -46,6 +46,7 @@ Write the following handoff document and present it to the user. Save it to a fi
 - Haiku — if the remaining work is simple formatting or config
 - Sonnet — if the remaining work is standard development
 - Opus — if the remaining work involves architecture decisions, security review, or the current model has been struggling
+- Fable — if the remaining work is exceptionally hard and even Opus would struggle (top-tier model; access depends on your plan)
 
 **Context note:**
 [one paragraph describing the state of the codebase as it stands, so the next session does not have to re-read everything]
@@ -55,7 +56,7 @@ Write the following handoff document and present it to the user. Save it to a fi
 
 Start the new session with the right model:
 ```bash
-claude --model claude-sonnet-4-6
+claude --model claude-sonnet-5
 ```
 
 Then paste the handoff document into the first message of the new session and ask Claude to continue from where it left off.

@@ -4,6 +4,40 @@ All notable changes to this project will be documented here.
 
 Format: [Semantic Versioning](https://semver.org/). Dates are YYYY-MM-DD.
 
+## [2.0.0] — 2026-07-13
+
+Major release: Claude Brain becomes a Master Brain — persistent cross-project memory, an update system with `/brain-update`, one-line bootstrap installers, and a rebuilt bilingual beginner-proof setup wizard.
+
+Added:
+- Obsidian Master Brain: optional persistent cross-project memory as a plain-Markdown vault; scaffolds in `templates/obsidian/de/` and `templates/obsidian/en/`; default location `~/Documents/ClaudeBrainVault`; concept documented in `docs/OBSIDIAN_BRAIN.md`
+- Update system: `scripts/check-update.ps1/.sh` (daily version check, installed as a Claude Code `SessionStart` hook, one GET request to GitHub, opt-out available), `scripts/update.ps1/.sh` (applies updates with backup to `~/.claude/brain/backups/`), `VERSION` file, brain runtime under `~/.claude/brain/` with `config.json`, and `docs/UPDATE.md`
+- New skill `skills/brain-update/SKILL.md` — check for and apply Claude Brain updates from inside a session (14 bundled skills total)
+- `scripts/bootstrap.ps1/.sh`: one-line web installers (`irm ... | iex` / `curl ... | bash`) — download the repo ZIP to a temp folder and start the interactive setup; no git required
+- `README.de.md`: full German README with language-switch links in both directions
+- `INSTALL.md`: step-by-step installation guide for both platforms, written for absolute beginners
+- Answer-file mode (`--answer-file` / `-AnswerFile`) in the setup wizard for unattended and CI runs
+- Migration handling for V1 installs: an existing `~/CLAUDE.md` is detected and can be renamed to `~/CLAUDE.md.backup-<timestamp>` (never deleted)
+
+Changed:
+- Interactive wizard rebuilt for absolute beginners: 20 questions (was 15), fully bilingual German/English with the language chosen in question 1, a plain-language explanation before every question, input validation with friendly re-prompts, a final answer summary with confirmation before anything is written, and automatic model detection from `~/.claude/settings.json`
+- Personalized `CLAUDE.md` now installs to `~/.claude/CLAUDE.md` (Claude Code's global location) instead of `~/CLAUDE.md`
+- Model IDs updated to the Claude 5 family throughout docs, scripts, and skills: `claude-sonnet-5`, `claude-opus-4-8`, `claude-fable-5` added as the top-tier model (availability depends on plan); `claude-haiku-4-5-20251001` unchanged
+- `skills/brain-model-routing` and `skills/brain-session-handoff` updated to Claude 5 model IDs; all bundled skills reviewed and refreshed
+- Orchestration level is no longer a setup question — fixed at "Balanced" with the 15-minute rule
+- `scripts/install.ps1/.sh`: now also installs the brain runtime (`~/.claude/brain/`) and registers the update hook; new flag `--no-update-check` / `-NoUpdateCheck` to skip hook registration
+- `settings.example.json`: added a `SessionStart` hook example for the update check
+- `docs/ONBOARDING_QUESTIONS.md`: rewritten for the V2 question catalog (F1–F20)
+- `docs/MODEL_ROUTING.md`: rewritten for the Claude 5 family with a decision tree and exact `--model` examples
+- `docs/SECURITY.md`: documents every network access (bootstrap, check-update, update) with exact URLs and the opt-out
+- `docs/TROUBLESHOOTING.md`: new entries for hook not firing, broken umlauts (PowerShell 5.1 / BOM), execution policy, missing python3/jq, updates behind a proxy or offline, and two conflicting CLAUDE.md files after V1 migration
+- `docs/FAQ.md`, `docs/TOKEN_EFFICIENCY.md`, `docs/RUFLO_ORCHESTRATION.md`, `docs/SKILLS.md`: updated for 14 skills, the new questions, and Claude 5 model IDs
+- `README.md`: rewritten around the Master Brain message with bootstrap one-liners first
+
+Unchanged:
+- The iron rules: scripts never delete user files, every overwrite is preceded by a timestamped backup, everything installs under the home directory, no admin rights, no secrets
+- `docs/PRINCIPLES.md`, `docs/DREAM_CYCLE.md`, `docs/GITHUB_LABELS.md` carried over from V1 as-is
+- MIT license
+
 ## [0.4.0] — 2026-05-22
 
 13 bundled Brain skills added; installer updated with skill install flags; documentation restructured.

@@ -6,13 +6,19 @@ Practical rules to keep token costs under control. No magic — just habits.
 
 ### 1. Pick the right model before starting
 
-Using Opus when Sonnet would do costs roughly 3× more per token. See `MODEL_ROUTING.md`.
+Using Opus 4.8 or Fable 5 when Sonnet 5 would do costs several times more per token. Using Sonnet when Haiku 4.5 would do wastes money too. See `MODEL_ROUTING.md` for the Claude 5 family decision table.
+
+```bash
+claude --model claude-haiku-4-5-20251001   # Simple, bounded tasks
+claude --model claude-sonnet-5             # Standard development
+claude --model claude-opus-4-8             # Architecture, security, complex work
+```
 
 ### 2. Do not resume huge sessions
 
 Resuming a session with a large conversation history costs tokens on every message because the full history is re-read. When a session has grown large:
 
-- Use `/create_handoff` inside the session to generate a context summary.
+- Use `/brain-session-handoff` inside the session to generate a context summary.
 - End the session.
 - Start fresh, paste the handoff summary.
 
@@ -69,6 +75,7 @@ This gives you function names, classes, and imports at a fraction of the cost.
 ### 7. Compact only at natural breakpoints
 
 `/compact` summarises the current conversation. Use it when:
+
 - You have completed a major sub-task.
 - You are about to start a different phase of work.
 
@@ -77,6 +84,8 @@ Do not use `/compact` reflexively. It costs tokens to summarise and loses detail
 ### 8. Audit your hooks
 
 Hooks that run on every tool call add overhead. Only enable hooks you actually use every day. Periodically check `settings.json` and remove hooks that are not earning their cost.
+
+(The Brain update-check hook runs only once at session start, finishes in well under six seconds, and stays silent unless an update exists — its overhead is negligible. You can still disable it; see `docs/UPDATE.md`.)
 
 ### 9. Keep context focused
 

@@ -23,21 +23,23 @@ Claude cannot change models mid-session. Choosing the wrong model means either a
 | Model | Flag | Use when |
 |-------|------|----------|
 | Haiku | `--model claude-haiku-4-5-20251001` | Formatting, renaming, single-file trivial edits, simple config changes |
-| Sonnet | `--model claude-sonnet-4-6` | Standard development, multi-file features, debugging, most tasks |
-| Opus | `--model claude-opus-4-7` | Architecture decisions, security audits, complex multi-file work, when Sonnet is struggling |
+| Sonnet | `--model claude-sonnet-5` | Standard development, multi-file features, debugging, most tasks |
+| Opus | `--model claude-opus-4-8` | Architecture decisions, security audits, complex multi-file work, when Sonnet is struggling |
+| Fable | `--model claude-fable-5` | The hardest problems: deep architecture, difficult debugging, work where even Opus struggles. Access depends on your plan |
 
 **Cost relationship**
 
-Haiku is cheapest. Sonnet costs roughly 5x Haiku. Opus costs roughly 15x Haiku. Use the cheapest model that can reliably do the job.
+Haiku is cheapest. Sonnet costs roughly 5x Haiku. Opus costs roughly 15x Haiku. Fable is the top-tier model and the most expensive; whether you can use it depends on your plan. Use the cheapest model that can reliably do the job.
 
 **When in doubt, start with Sonnet.** It handles the majority of real development work well.
 
 **Shell aliases (add to ~/.bashrc or ~/.zshrc)**
 
 ```bash
-alias cc='claude --model claude-sonnet-4-6'
+alias cc='claude --model claude-sonnet-5'
 alias cch='claude --model claude-haiku-4-5-20251001'
-alias cco='claude --model claude-opus-4-7'
+alias cco='claude --model claude-opus-4-8'
+alias ccf='claude --model claude-fable-5'
 ```
 
 **Escalation path when the session model is not enough**
@@ -54,6 +56,7 @@ Do not try to muscle through a complex task with an underpowered model. Escalati
 - Is this a one-file formatting or rename task? → Haiku
 - Is this standard development work with clear scope? → Sonnet
 - Does this involve system architecture, security analysis, or is Sonnet giving inconsistent results? → Opus
+- Is this at the limit of what Opus can do, and does your plan include Fable? → Fable
 
 ## Checklist
 

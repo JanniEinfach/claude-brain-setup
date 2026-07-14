@@ -1,6 +1,6 @@
 # Ruflo Orchestration
 
-A lightweight orchestration approach for multi-agent work in Claude Code. Under 100 lines.
+A lightweight orchestration approach for multi-agent work in Claude Code. Under 100 lines. The bundled `brain-ruflo-orchestration` skill carries the same guidance into a session.
 
 ## The Core Pattern
 
@@ -16,6 +16,7 @@ Do not add orchestration because it looks organised. The overhead is real.
 ## When Orchestration Saves Time
 
 Use agents when:
+
 - Two or more tasks are genuinely independent and can run in parallel
 - A task requires a specialised role (security audit, architecture review)
 - The work is too large for one context window
@@ -24,6 +25,7 @@ Use agents when:
 ## When Orchestration Wastes Tokens
 
 Do not spawn agents for:
+
 - A single-file edit
 - A quick bug fix or simple question
 - Config changes or doc updates
@@ -45,13 +47,19 @@ If task B needs task A's output, run them sequentially. Only go parallel when ta
 **Step 4 — Review and verify.**
 After implementation: run `code-reviewer`. For code touching auth, payments, or user data, run `security-reviewer`. These are not optional for production code.
 
+## Model Choice for Orchestration
+
+The orchestrating session should run on a strong model — Sonnet 5 (`claude-sonnet-5`) as the baseline, Opus 4.8 (`claude-opus-4-8`) or Fable 5 (`claude-fable-5`, plan-dependent) for complex coordination. Mechanical sub-tasks (bulk renames, formatting, boilerplate) can be delegated to cheaper models such as Haiku 4.5 (`claude-haiku-4-5-20251001`). See `docs/MODEL_ROUTING.md`.
+
 ## Available Agents
 
-Planning: `planner`, `architect`
-Implementation: `kraken`, `spark`, `sparc-coder`
-Review: `code-reviewer`, `security-reviewer`, `tdd-guide`
-Research: `scout`, `oracle`, `debug-agent`, `sleuth`
-Utilities: `build-error-resolver`, `refactor-cleaner`
+These agents come from the optional ECC skill collection (see `docs/SKILLS.md`) — they are not bundled with this repository:
+
+- Planning: `planner`, `architect`
+- Implementation: `kraken`, `spark`, `sparc-coder`
+- Review: `code-reviewer`, `security-reviewer`, `tdd-guide`
+- Research: `scout`, `oracle`, `debug-agent`, `sleuth`
+- Utilities: `build-error-resolver`, `refactor-cleaner`
 
 ## The 15-Minute Rule
 
@@ -60,7 +68,7 @@ If you estimate the task will take less than 15 minutes to complete alone, skip 
 ## Anti-Patterns
 
 - Spawning an agent to read a single file — just read it yourself
-- Using the `Explore` task type instead of `scout` — Explore uses Haiku and produces poor results
+- Sending exploration work to a generic low-cost sub-task instead of a dedicated exploration agent like `scout` — cheap generic exploration produces shallow results
 - Orchestrating agents for a clearly sequential task
 - Running `code-reviewer` before the code is written
 - Spawning `security-reviewer` on a config change or doc update

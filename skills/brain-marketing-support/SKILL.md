@@ -4,7 +4,7 @@
 
 Writing guidance for sales copy, product descriptions, landing pages, SEO metadata, and email campaigns. Produces human-sounding output that is direct, specific, and benefit-focused.
 
-**Note:** This is an optional skill. Enable it during setup (Question 12) or load it manually when you need it.
+**Note:** This is an optional skill. Enable it during setup (Question 15) or load it manually when you need it.
 
 ## When to Use
 

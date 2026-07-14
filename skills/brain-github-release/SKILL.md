@@ -64,13 +64,13 @@ git push origin main
 
 Tag the release:
 ```bash
-git tag v0.4.0
-git push origin v0.4.0
+git tag v2.0.0
+git push origin v2.0.0
 ```
 
 Create a GitHub release with notes:
 ```bash
-gh release create v0.4.0 --title "v0.4.0 — Bundled Brain Skills" \
+gh release create v2.0.0 --title "v2.0.0 — Master Brain Update" \
   --notes "See CHANGELOG.md for full details."
 ```
 

@@ -4,7 +4,7 @@
 
 Development guidance for FiveM Lua scripting, NUI (HTML/JS interface), and QBox/QBCore/ESX framework work. Covers the most common mistakes and the patterns that avoid them.
 
-**Note:** This is an optional skill. Enable it during setup (Question 13) or load it manually for FiveM work.
+**Note:** This is an optional skill. Enable it during setup (Question 14) or load it manually for FiveM work.
 
 ## When to Use
 

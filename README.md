@@ -1,138 +1,134 @@
 ![Brain Setup for Claude Code](brain_setup_for_claude_code.png)
 
+🇩🇪 Deutsche Version: [README.de.md](README.de.md)
+
 # Claude Brain Setup
 
 > **Unofficial Claude Code configuration toolkit. Not affiliated with Anthropic.**
 
-A practical, installable configuration for Claude Code that makes it work in a disciplined, token-efficient way — with an optional interactive setup that personalizes it to your workflow.
+**Turn Claude Code into a Master Brain.** One guided setup gives Claude Code a personalized system instruction file, a persistent cross-project memory, 14 ready-to-use skills, and an update system that keeps everything current.
 
-## What This Is
+## What You Get
 
-A `CLAUDE.md` system-instruction file plus supporting docs, scripts, and examples. Install it and Claude Code gets consistent, explicit rules: when to plan, which model to pick, how to use skills, when to hand off sessions.
+1. **Beginner-proof interactive setup** — a bilingual (German/English) wizard that explains every question in plain language, validates your answers, and even detects which Claude model you are running. You end up with a `CLAUDE.md` tailored to your name, goals, experience level, and workflow.
+2. **Obsidian Master Brain** — an optional persistent memory: a folder of plain Markdown notes where Claude records projects, decisions, and knowledge about your collaboration — across sessions and across projects. Works with or without the free [Obsidian](https://obsidian.md) app.
+3. **Automatic update notifications** — a small hook checks once per day whether a new Brain version exists on GitHub and tells you inside Claude Code. Update with a single command: `/brain-update`.
+4. **14 bundled skills** — portable Markdown instruction files for disciplined workflows, token efficiency, security reviews, session handoffs, and more. They install to `~/.claude/skills/` and never execute code on their own.
+5. **Windows, Linux, and macOS** — feature-identical PowerShell and Bash scripts. No admin rights. The scripts never delete files; every overwrite is preceded by a timestamped backup.
+
+## Quick Start
+
+### One-line install (no git required)
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/JanniEinfach/claude-brain-setup/main/scripts/bootstrap.ps1 | iex
+```
+
+**Linux / macOS:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/JanniEinfach/claude-brain-setup/main/scripts/bootstrap.sh | bash
+```
+
+The bootstrap script downloads the repository as a ZIP to a temporary folder and starts the interactive setup from there. Piping a script from the internet requires trust — feel free to read `scripts/bootstrap.ps1` / `scripts/bootstrap.sh` in this repository first.
+
+### Install via git clone
+
+```bash
+git clone https://github.com/JanniEinfach/claude-brain-setup.git
+cd claude-brain-setup
+./scripts/setup.sh          # interactive wizard (recommended)
+```
+
+Windows:
+
+```powershell
+git clone https://github.com/JanniEinfach/claude-brain-setup.git
+cd claude-brain-setup
+.\scripts\setup.ps1
+```
+
+Prefer a non-interactive install with sensible defaults? Use `./scripts/install.sh` / `.\scripts\install.ps1` (add `--with-skills` / `-WithSkills` for the bundled skills, `--no-update-check` / `-NoUpdateCheck` to skip the update hook).
+
+New to terminals? [INSTALL.md](INSTALL.md) explains every step, including how to open PowerShell or a terminal in the first place.
 
 ## What This Does NOT Do
 
 - **Does not auto-switch models.** Claude cannot change models mid-session. You pick the model at launch with `--model`. This project helps you pick correctly.
 - **Does not reduce tokens automatically.** Good habits reduce tokens. This project gives you those habits in writing.
+- **Does not send your data anywhere.** The only network calls are: downloading this repository (bootstrap/update) and the daily version check — a single GET request for a version number. No telemetry, no analytics. The version check can be disabled (see Security Notes).
+- **Does not require the Obsidian app.** The Master Brain is plain Markdown files. Obsidian is a nice, free viewer for them — nothing more.
 - **Does not make `/dream` edit your CLAUDE.md automatically.** The dream skill is a manual memory-consolidation tool you run deliberately.
 - **Does not know your exact context window percentage.** Claude estimates remaining space; it has no precise percentage counter.
 - **Does not require root or admin rights.** Everything installs to your home directory.
+- **Does not delete files. Ever.** Existing files are renamed or backed up with a timestamp before anything is written.
 
-## Quick Start (3 commands)
+## The Interactive Setup
 
-```bash
-git clone https://github.com/JanniEinfach/claude-brain-setup.git
-cd claude-brain-setup
-./scripts/install.sh
-```
+`setup.sh` / `setup.ps1` asks 20 questions — in German or English, your choice at the start. Every question comes with a short plain-language explanation of what it means and why it is asked. Topics: your name, experience level, goals, main work type, tech stacks, model (auto-detected from `~/.claude/settings.json` where possible), plan tier, token strategy, planning style, code style, testing, security level, optional FiveM and marketing modules, partner mode, the Obsidian Master Brain, your first project, update notifications, and skill installation.
 
-Then launch Claude Code:
+At the end you see a summary of all answers and confirm before anything is written.
 
-```bash
-claude --model claude-sonnet-4-6
-```
-
-## Install Options
-
-### Linux / macOS — Quick install (defaults)
-
-Copies the default `CLAUDE.md` to your home directory. Backs up any existing file before writing.
+Flags:
 
 ```bash
-chmod +x scripts/install.sh
-./scripts/install.sh
+./scripts/setup.sh --dry-run              # walk through everything, print the result, write nothing
+./scripts/setup.sh --target ~/mydir       # write to a custom directory
+./scripts/setup.sh --answer-file a.txt    # unattended run: one answer per line, empty line = default
+./scripts/setup.sh --help
 ```
 
-### Linux / macOS — Guided interactive setup (recommended)
+The PowerShell equivalents are `-DryRun`, `-Target`, `-AnswerFile`, `-Help`.
 
-Asks 15 questions and generates a personalized `CLAUDE.md` tailored to your name, language, work type, tech stacks, and preferences.
+Full question guide: `docs/ONBOARDING_QUESTIONS.md`
+
+### Where things are installed
+
+| What | Location |
+|------|----------|
+| Personalized `CLAUDE.md` | `~/.claude/CLAUDE.md` (global — applies in every project) |
+| Bundled skills | `~/.claude/skills/brain-*/` |
+| Brain runtime (version, config, updater) | `~/.claude/brain/` |
+| Obsidian Master Brain vault | your choice, default `~/Documents/ClaudeBrainVault` |
+| Update hook | one entry in `~/.claude/settings.json` (backed up first) |
+
+**Upgrading from V1?** V1 installed `CLAUDE.md` to your home directory (`~/CLAUDE.md`). The setup detects this, explains the change, and offers to rename the old file to `~/CLAUDE.md.backup-<timestamp>`. Nothing is deleted.
+
+## The Obsidian Master Brain
+
+The Master Brain is Claude's long-term memory: a vault of Markdown notes with a fixed structure — `projects/`, `knowledge/`, `decisions/`, `sessions/`, `me/` — plus writing conventions Claude follows. At session start Claude reads the vault index and the relevant project hub note; at session end it records durable insights and decisions. Over weeks this becomes a genuine cross-project memory that survives every session.
+
+You do not need the Obsidian app for this to work — the vault is ordinary text files. If you install [Obsidian](https://obsidian.md) (free), you get a pleasant graph-linked view of everything Claude knows.
+
+Concept, structure, and FAQ: `docs/OBSIDIAN_BRAIN.md`
+
+## Updates
+
+A `SessionStart` hook runs a small check script when Claude Code starts — at most once every 24 hours. It fetches this repository's `VERSION` file from GitHub (one GET request, nothing about you is sent) and prints a notice if a newer version exists. Claude sees the notice and tells you.
+
+To update:
+
+```
+/brain-update            # inside Claude Code — checks, confirms, applies
+```
+
+or manually:
 
 ```bash
-chmod +x scripts/setup.sh
-./scripts/setup.sh
+~/.claude/brain/update.sh          # Linux/macOS  (--check to only check, --yes to skip the prompt)
 ```
-
-Additional flags:
-
-```bash
-./scripts/setup.sh --dry-run            # Preview output without writing any files
-./scripts/setup.sh --target ~/mydir     # Install to a custom directory
-```
-
-### Windows PowerShell — Quick install
 
 ```powershell
-.\scripts\install.ps1
+& "$env:USERPROFILE\.claude\brain\update.ps1"   # Windows  (-Check / -Yes)
 ```
 
-Additional options:
+Updates refresh the bundled skills, the update scripts, and the docs copy. They **never** touch your personalized `CLAUDE.md`, your vault, or your settings. The previous state is backed up to `~/.claude/brain/backups/` first, so you can roll back. Full details: `docs/UPDATE.md`
 
-```powershell
-.\scripts\install.ps1 -DryRun             # Preview without writing
-.\scripts\install.ps1 -Target C:\Users\You\claude-config   # Custom directory
-```
+## Bundled Brain Skills (14)
 
-### Windows PowerShell — Guided interactive setup
-
-```powershell
-.\scripts\setup.ps1
-```
-
-Additional options:
-
-```powershell
-.\scripts\setup.ps1 -DryRun
-.\scripts\setup.ps1 -Target C:\Users\You\claude-config
-```
-
-No admin rights required on any platform.
-
-## Interactive Setup Flow
-
-Running `setup.sh` walks you through 15 questions covering: your name, preferred response language, main work type (web, backend, FiveM, DevOps, etc.), model strategy, token-saving strictness, planning preference, code style, testing preference, security level, primary tech stacks, frontend style, marketing support, FiveM guidance, memory/dream usage, and agent orchestration level.
-
-It fills a `CLAUDE.md` template with your answers, optionally appending a FiveM section or a marketing section. Before writing, it backs up any existing file with a timestamp suffix so nothing is lost.
-
-Full question guide with explanations: `docs/ONBOARDING_QUESTIONS.md`
-
-## Example Workflows
-
-**Standard development session:**
-
-```bash
-claude --model claude-sonnet-4-6
-# Inside the session:
-# /plan-agent    — write a plan before touching 3+ files
-# /tdd           — test-first workflow
-# /review        — quality check before committing
-# /create_handoff — save context before ending a large session
-```
-
-**Quick edit or formatting:**
-
-```bash
-claude --model claude-haiku-4-5-20251001
-# Single-file changes, renaming, simple fixes
-```
-
-**Architecture or security review:**
-
-```bash
-claude --model claude-opus-4-7
-# Complex multi-file work, auth systems, database schema changes
-```
-
-**Session got too large:**
-
-```
-/create_handoff   # Claude writes a context summary
-# End the session
-# Start a new session with the right model, paste the handoff
-```
-
-## Bundled Brain Skills
-
-This repository includes 13 ready-to-use Brain skills that install directly to `~/.claude/skills/`. They are portable Markdown instruction files — no code executes automatically. Claude Code reads them as context when you load a skill with `/skill-name` during a session.
+Portable Markdown instruction files — no code executes automatically. Claude Code reads a skill as context when you load it with `/skill-name` during a session.
 
 | Skill | Purpose |
 |-------|---------|
@@ -147,96 +143,108 @@ This repository includes 13 ready-to-use Brain skills that install directly to `
 | `brain-ruflo-orchestration` | When and how to use multi-agent workflows |
 | `brain-skill-authoring` | Guide for writing new bundled Brain skills |
 | `brain-github-release` | Checklist for preparing a public GitHub release |
+| `brain-update` | Check for and apply Claude Brain updates |
 | `brain-marketing-support` | Writing guidance for sales, marketing, and SEO copy (optional) |
 | `brain-fivem-development` | FiveM Lua scripting, NUI, and framework guidance (optional) |
 
-Install bundled skills on **Linux / macOS**:
+The interactive setup installs them for you. Separately: `./scripts/install.sh --with-skills` / `.\scripts\install.ps1 -WithSkills`.
+
+## Example Session
 
 ```bash
-./scripts/install.sh --with-skills
-# or during interactive setup:
-./scripts/setup.sh
+claude --model claude-sonnet-5
+# Inside the session:
+# /brain-core-workflow    — disciplined workflow before touching 3+ files
+# /brain-update           — check for Brain updates
+# /brain-session-handoff  — save context before ending a large session
 ```
 
-Install bundled skills on **Windows PowerShell**:
+Quick edits and formatting:
 
-```powershell
-.\scripts\install.ps1 -WithSkills
-# or during interactive setup:
-.\scripts\setup.ps1
+```bash
+claude --model claude-haiku-4-5-20251001
 ```
 
-The interactive setup script (`setup.sh` / `setup.ps1`) will ask whether to install bundled skills as part of its standard flow. You can always install them separately later with `--with-skills` / `-WithSkills`.
+Architecture, security, complex multi-file work:
 
-## Security Notes
+```bash
+claude --model claude-opus-4-8
+```
 
-- The install script never deletes files. It only copies and backs up.
-- No secrets, API keys, or tokens belong in `CLAUDE.md` or `settings.json`.
-- `settings.example.json` contains read-only shell permissions by default. Review before using.
-- Bundled skills are Markdown files only. They do not run code automatically.
-- See `docs/SECURITY.md` for the full security guide.
+Top-tier model (availability depends on your plan):
+
+```bash
+claude --model claude-fable-5
+```
+
+Model decision guide: `docs/MODEL_ROUTING.md`
 
 ## File Structure
 
 ```
 claude-brain-setup/
-├── README.md
-├── CLAUDE.md                     — default system instruction file
+├── README.md                       — this file (English)
+├── README.de.md                    — German version
+├── CLAUDE.md                       — generic default system instruction file
 ├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── LICENSE
-├── settings.example.json         — safe example Claude Code settings
-├── .gitignore
+├── INSTALL.md                      — step-by-step guide for both platforms
+├── VERSION                         — current version (read by the update check)
+├── LICENSE, CONTRIBUTING.md, CODE_OF_CONDUCT.md, .gitignore, .gitattributes
+├── settings.example.json           — safe example Claude Code settings incl. update hook
+├── brain_setup_for_claude_code.png
+├── .github/                        — issue and PR templates
 ├── templates/
-│   └── CLAUDE.template.md        — template used by setup.sh / setup.ps1
+│   ├── CLAUDE.template.md          — template filled by the setup wizard
+│   └── obsidian/
+│       ├── de/                     — German vault scaffold
+│       └── en/                     — English vault scaffold
 ├── scripts/
-│   ├── install.sh                — quick non-interactive installer (Linux/macOS)
-│   ├── setup.sh                  — interactive personalized setup (Linux/macOS)
-│   ├── install.ps1               — quick non-interactive installer (Windows)
-│   └── setup.ps1                 — interactive personalized setup (Windows)
-├── skills/                       — bundled Brain skills (13 included)
-│   ├── brain-core-workflow/
-│   ├── brain-token-discipline/
-│   ├── brain-model-routing/
-│   ├── brain-karpathy-principles/
-│   ├── brain-security-review/
-│   ├── brain-cross-platform-setup/
-│   ├── brain-session-handoff/
-│   ├── brain-pr-review/
-│   ├── brain-ruflo-orchestration/
-│   ├── brain-skill-authoring/
-│   ├── brain-github-release/
-│   ├── brain-marketing-support/
-│   └── brain-fivem-development/
+│   ├── setup.ps1 / setup.sh        — interactive wizard (the heart of this project)
+│   ├── install.ps1 / install.sh    — quick non-interactive install
+│   ├── bootstrap.ps1 / bootstrap.sh — one-line web installer
+│   ├── check-update.ps1 / check-update.sh — daily version check (installed as hook)
+│   └── update.ps1 / update.sh      — applies updates with backup
+├── skills/                         — 14 bundled Brain skills
 └── docs/
-    ├── ONBOARDING_QUESTIONS.md   — all 15 setup questions explained
-    ├── MODEL_ROUTING.md          — how to pick the right model
-    ├── TOKEN_EFFICIENCY.md       — practical token-saving habits
-    ├── SKILLS.md                 — verified skill list with token costs
-    ├── RUFLO_ORCHESTRATION.md    — when and how to use agents
-    ├── SECURITY.md               — what this project touches and risks
-    ├── TROUBLESHOOTING.md        — common issues and fixes
-    ├── FAQ.md                    — short answers to common questions
-    └── PRINCIPLES.md             — engineering principles (think before coding)
+    ├── ONBOARDING_QUESTIONS.md     — all 20 setup questions explained
+    ├── MODEL_ROUTING.md            — how to pick the right model (Claude 5 family)
+    ├── OBSIDIAN_BRAIN.md           — the Master Brain concept
+    ├── UPDATE.md                   — the update system in detail
+    ├── TOKEN_EFFICIENCY.md         — practical token-saving habits
+    ├── SKILLS.md                   — verified skill list with token costs
+    ├── RUFLO_ORCHESTRATION.md      — when and how to use agents
+    ├── SECURITY.md                 — what this project touches and risks
+    ├── TROUBLESHOOTING.md          — common issues and fixes
+    ├── FAQ.md                      — short answers to common questions
+    ├── PRINCIPLES.md               — engineering principles
+    ├── DREAM_CYCLE.md              — manual memory consolidation
+    └── GITHUB_LABELS.md            — suggested label set
 ```
 
 ## Requirements
 
 - Claude Code installed (`npm install -g @anthropic-ai/claude-code`)
 - An Anthropic API key or Claude Pro/Max subscription
-- Bash shell (macOS or Linux) or PowerShell 5.1+ (Windows)
+- Windows: PowerShell 5.1 or newer — Linux/macOS: Bash
+- `curl` or `wget` (Linux/macOS, for bootstrap and update check)
+- Optional: `python3` or `jq` on Linux/macOS for automatic settings merging (a manual fallback is provided)
+- Optional: the Obsidian app for viewing the Master Brain
+- `git` only if you install via clone
 - No root or admin rights required
-
-## Troubleshooting
-
-See `docs/TROUBLESHOOTING.md` for common issues and fixes.
 
 ## Security Notes
 
-The install scripts never delete user files. Existing `CLAUDE.md` files are backed up with a timestamp before any overwrite. See `docs/SECURITY.md` for the full guide.
+- **The scripts never delete files.** They copy, rename, and back up. Every overwrite is preceded by a timestamped backup.
+- **Network access is limited to three scripts:** `bootstrap` (downloads the repo ZIP from GitHub), `check-update` (fetches the `VERSION` file), and `update` (downloads the latest release). Nothing else talks to the network.
+- **Daily version check — full disclosure:** once installed, a `SessionStart` hook performs at most one GET request per 24 hours to `https://raw.githubusercontent.com/JanniEinfach/claude-brain-setup/main/VERSION`. It sends no data about you — it only downloads a version string. Opt out any time: answer "no" to setup question 19, install with `--no-update-check` / `-NoUpdateCheck`, or set `updateCheck.enabled` to `false` in `~/.claude/brain/config.json`.
+- Bundled skills are Markdown files only. They do not run code automatically.
+- Do not put secrets, API keys, or private paths in `CLAUDE.md`. It is read as a system prompt, not a config file.
+- `settings.example.json` contains read-only shell permissions and the update hook. Review before using.
+- Full guide: `docs/SECURITY.md`
 
-Do not put secrets, API keys, or private paths in `CLAUDE.md`. It is read as a system prompt, not a config file.
+## Troubleshooting
+
+See `docs/TROUBLESHOOTING.md` — including PowerShell execution policy, broken umlauts, hooks not firing, offline behavior, and the V1→V2 migration.
 
 ## Contributing
 

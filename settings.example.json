@@ -1,5 +1,5 @@
 {
-  "model": "claude-sonnet-4-6",
+  "model": "claude-sonnet-5",
   "permissions": {
     "allow": [
       "Bash(git status)",
@@ -22,5 +22,18 @@
       "Bash(pwd)"
     ],
     "deny": []
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$HOME/.claude/brain/check-update.sh\""
+          }
+        ]
+      }
+    ]
   }
 }

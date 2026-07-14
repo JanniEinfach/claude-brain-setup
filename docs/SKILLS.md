@@ -2,11 +2,11 @@
 
 Skills in `~/.claude/skills/` are loaded on demand with `/skill-name` inside a Claude Code session. Only load a skill when you need it — speculative loading wastes tokens.
 
-## Bundled Brain Skills
+## Bundled Brain Skills (14)
 
-These skills are included in this repository and installed by the setup scripts. They are portable, public-safe, and require no external tools beyond bash, python3, git, and Claude Code.
+These skills are included in this repository and installed by the setup scripts (Question 20 of the wizard). They are portable, public-safe Markdown instruction files — they never execute anything by themselves.
 
-Install them during setup (the interactive questionnaire will ask) or separately:
+Install them during setup or separately:
 
 ```bash
 # Linux / macOS
@@ -18,25 +18,29 @@ Install them during setup (the interactive questionnaire will ask) or separately
 
 | Skill | Purpose | Token risk |
 |-------|---------|-----------|
-| `brain-core-workflow` | Disciplined six-step development workflow | Low |
-| `brain-token-discipline` | Habits that reduce token usage without losing quality | Low |
-| `brain-model-routing` | Choosing the right model before a session starts | Low |
+| `brain-core-workflow` | Six-step disciplined development workflow for non-trivial tasks | Low |
+| `brain-token-discipline` | Practical habits that reduce token consumption without reducing quality | Low |
+| `brain-model-routing` | Choosing the right Claude model before a session starts (Claude 5 family), with escalation path | Low |
 | `brain-karpathy-principles` | Engineering discipline: think before coding, simplicity, surgical changes | Low |
-| `brain-security-review` | Security checklist for code and repositories | Low–Medium |
-| `brain-cross-platform-setup` | Validate scripts work on Linux, macOS, and Windows | Low |
-| `brain-session-handoff` | Structured handoff before ending a large session or switching models | Low |
+| `brain-security-review` | Security review checklist for code and repositories | Low–Medium |
+| `brain-cross-platform-setup` | Checklist for verifying install/setup scripts on Linux, macOS, and Windows PowerShell | Low |
+| `brain-session-handoff` | Structured handoff before ending a large session, switching models, or pausing work | Low |
 | `brain-pr-review` | PR review checklist for this repository | Low |
-| `brain-ruflo-orchestration` | When and how to use multi-agent workflows | Low–Medium |
-| `brain-skill-authoring` | Guide for writing new bundled Brain skills | Low |
-| `brain-github-release` | Checklist for preparing a public GitHub release | Low |
+| `brain-ruflo-orchestration` | Lightweight multi-agent orchestration guidance — when agents are worth their overhead | Low–Medium |
+| `brain-skill-authoring` | Guide for contributors writing new bundled Brain skills | Low |
+| `brain-github-release` | Checklist for preparing and publishing a public GitHub release | Low |
+| `brain-update` | **New in 2.0.0** — check for and apply Claude Brain updates via `~/.claude/brain/update.{sh,ps1}` | Low |
 | `brain-marketing-support` | Writing guidance for sales, marketing, and SEO copy (optional) | Low |
 | `brain-fivem-development` | FiveM Lua scripting, NUI, and framework guidance (optional) | Low–Medium |
 
-Note: `brain-marketing-support` and `brain-fivem-development` are optional. Enable them during setup or load them manually when needed.
+Notes:
+
+- `brain-marketing-support` and `brain-fivem-development` are optional. Enable them during setup (Questions 15 and 14 respectively) or load them manually when needed.
+- `brain-update` is the only skill whose instructions involve running a script (`~/.claude/brain/update.sh` / `update.ps1`). The skill itself is still plain Markdown; Claude asks through the normal permission flow before executing anything, and the update script never deletes files — it backs up to `~/.claude/brain/backups/` first. See `docs/UPDATE.md`.
 
 ## Optional External Skills
 
-The skills below are part of the ECC (Everything Claude Code) skill collection. They are not bundled with this repository. Each is marked `(requires optional ECC skill collection)` to make this clear.
+The skills below are part of the ECC (Everything Claude Code) skill collection. They are **not** bundled with this repository. Each section is marked `(requires optional ECC skill collection)` to make this clear.
 
 The list below was verified against the actual skills directory in a full ECC setup. Skills requiring a separate install are noted.
 
@@ -123,7 +127,9 @@ The list below was verified against the actual skills directory in a full ECC se
 | `continuous-learning-v2` | Ongoing learning integration | Low |
 | `compound-learnings` | Synthesise multiple learnings | Low |
 
-**Note on `/dream`:** This skill does not automatically edit `CLAUDE.md`. It is a manual tool you run deliberately at the end of a significant session.
+**Note on `/dream`:** This skill does not automatically edit `CLAUDE.md`. It is a manual tool you run deliberately at the end of a significant session. The bundled `brain-session-handoff` skill covers the handoff use case without any external install.
+
+**Note on the Master Brain:** If you enabled the Obsidian Master Brain during setup, cross-session memory lives in your vault (see `docs/OBSIDIAN_BRAIN.md`) — no external memory skills are required for that.
 
 ## Frontend and Web *(requires optional ECC skill collection)*
 
@@ -178,7 +184,7 @@ The list below was verified against the actual skills directory in a full ECC se
 
 ## Verified Agents (in ~/.claude/agents/) *(requires optional ECC skill collection)*
 
-These agents are confirmed present. Use them via the Task tool for parallel or specialised work.
+These agents are part of a full ECC setup. Use them via the Task tool for parallel or specialised work.
 
 | Agent | Role | When to use |
 |-------|------|-------------|

@@ -44,6 +44,9 @@ $VaultTplRoot = Join-Path $ProjectRoot 'templates\obsidian'
 $SkillsSrc    = Join-Path $ProjectRoot 'skills'
 $DocsSrc      = Join-Path $ProjectRoot 'docs'
 $VersionFile  = Join-Path $ProjectRoot 'VERSION'
+$TrioSrc      = Join-Path $ProjectRoot 'brain	rio'
+$CommandsSrc  = Join-Path $ProjectRoot 'commands'
+$CommandsDest = Join-Path $ClaudeDir 'commands'
 
 $RepoSlug   = 'JanniEinfach/claude-brain-setup'
 $RepoBranch = 'main'
@@ -300,7 +303,7 @@ $Script:TXT = @{
         'too_short_generic' = 'Bitte gib etwas mehr Text ein.'
         'yn_default_yes'    = '[J/n]'
         'yn_default_no'     = '[j/N]'
-        'q_of'              = 'Frage {0} von 20'
+        'q_of'              = 'Frage {0} von 22'
         'backed_up'         = 'Backup: {0} -> {1}'
 
         'f2_q' = 'Wie soll Claude dich nennen?'
@@ -386,6 +389,23 @@ $Script:TXT = @{
         'f20_q' = 'Brain-Skills installieren?'
         'f20_x' = 'Skills sind fertige Arbeitsanleitungen fuer Claude (z. B. ein Sicherheits-Check). Reine Textdateien, fuehren nichts von selbst aus.'
 
+        'f21_q' = 'Codex und Antigravity mit einbinden?'
+        'f21_x' = 'Du kannst neben Claude noch zwei weitere KI-Kommandozeilen nutzen: Codex (von OpenAI) und Antigravity (von Google). Beide laufen ueber dein jeweiliges Abo - es entstehen KEINE zusaetzlichen Kosten und du brauchst keinen API-Schluessel. Claude bleibt der Chef und entscheidet, was die beiden duerfen. Wenn eines der Programme nicht installiert ist, wird es einfach uebersprungen.'
+        'f21_none' = 'Weder Codex noch Antigravity gefunden - Frage wird uebersprungen.'
+        'f22_q' = 'Bestehende Konfiguration komplett neu aufbauen?'
+        'f22_x' = 'Wenn du schon eine CLAUDE.md hast, kann das Setup sie entweder ergaenzen oder komplett neu schreiben. Neu schreiben ist sauberer, verliert aber alles Selbstgeschriebene. Ich sehe gleich nach, was bei dir liegt, und sage dir ehrlich, was sinnvoller ist. In beiden Faellen wird vorher eine datierte Sicherung angelegt - es geht nie etwas verloren.'
+        'f22_analyzing' = 'Ich sehe mir deine bestehende Konfiguration an ...'
+        'f22_rec_reset' = 'Meine Empfehlung: Neu aufbauen. Es geht nichts Wertvolles verloren.'
+        'f22_rec_merge' = 'Meine Empfehlung: BEHALTEN und ergaenzen. Du hast selbstgeschriebene Inhalte, die beim Neuaufbau verloren gingen.'
+        'f22_rec_review' = 'Kein klarer Fall. Sieh dir die Datei selbst an, bevor du entscheidest.'
+        'f22_ask' = 'Trotzdem komplett neu aufbauen?'
+        'sum_trio' = 'Codex + Antigravity'
+        'sum_reset' = 'Konfiguration neu'
+        'wr_commands' = 'Befehle installiert: {0}'
+        'wr_trio' = 'Trio eingerichtet - Claude ist die Genehmigungsinstanz'
+        'wr_trio_skip' = 'Trio uebersprungen'
+        'wr_trio_fail' = 'Trio-Einrichtung meldete einen Fehler - siehe Ausgabe oben'
+
         'sum_title'    = 'Zusammenfassung deiner Antworten'
         'sum_confirm'  = 'Passt das?'
         'sum_abort'    = 'Alles klar - es wurde nichts geschrieben. Starte das Setup einfach neu, wenn du bereit bist.'
@@ -456,7 +476,7 @@ $Script:TXT = @{
         'too_short_generic' = 'Please enter a bit more text.'
         'yn_default_yes'    = '[Y/n]'
         'yn_default_no'     = '[y/N]'
-        'q_of'              = 'Question {0} of 20'
+        'q_of'              = 'Question {0} of 22'
         'backed_up'         = 'Backup: {0} -> {1}'
 
         'f2_q' = 'What should Claude call you?'
@@ -541,6 +561,23 @@ $Script:TXT = @{
 
         'f20_q' = 'Install the Brain skills?'
         'f20_x' = 'Skills are ready-made work instructions for Claude (e.g. a security check). Plain text files - they never execute anything by themselves.'
+
+        'f21_q' = 'Wire in Codex and Antigravity?'
+        'f21_x' = 'Alongside Claude you can use two more AI command lines: Codex (OpenAI) and Antigravity (Google). Both bill through your existing subscription - there are NO extra costs and no API key is needed. Claude stays in charge and decides what the other two are allowed to do. If a tool is not installed it is simply skipped.'
+        'f21_none' = 'Neither Codex nor Antigravity found - skipping this question.'
+        'f22_q' = 'Rebuild an existing configuration from scratch?'
+        'f22_x' = 'If you already have a CLAUDE.md, setup can either extend it or rewrite it completely. Rewriting is cleaner but loses anything you wrote yourself. I will look at what you have and tell you honestly which makes more sense. Either way a timestamped backup is written first - nothing is ever lost.'
+        'f22_analyzing' = 'Looking at your existing configuration ...'
+        'f22_rec_reset' = 'My recommendation: rebuild. Nothing of value is lost.'
+        'f22_rec_merge' = 'My recommendation: KEEP and extend. You have handwritten content that a rebuild would destroy.'
+        'f22_rec_review' = 'No clear call. Read the file yourself before deciding.'
+        'f22_ask' = 'Rebuild completely anyway?'
+        'sum_trio' = 'Codex + Antigravity'
+        'sum_reset' = 'Rebuild config'
+        'wr_commands' = 'Commands installed: {0}'
+        'wr_trio' = 'Trio wired up - Claude is the approving authority'
+        'wr_trio_skip' = 'Trio skipped'
+        'wr_trio_fail' = 'Trio setup reported an error - see the output above'
 
         'sum_title'    = 'Summary of your answers'
         'sum_confirm'  = 'Does this look right?'
@@ -831,6 +868,70 @@ $UpdateCheckEnabled = Ask-YesNo -Question (T 'f19_q') -DefaultYes $true -Explain
 Show-QHeader 20
 $InstallSkills = Ask-YesNo -Question (T 'f20_q') -DefaultYes $true -Explain (T 'f20_x')
 
+# ── F21: Trio (Codex + Antigravity) ──
+#
+# Only asked when at least one tool is actually installed. Offering to wire up
+# software the user does not have is noise, and a "yes" would do nothing.
+function Find-TrioTools {
+    $agy = $null
+    $codex = $null
+    foreach ($c in @(
+        $env:AGY_BIN,
+        (Join-Path $env:LOCALAPPDATA 'agyingy.exe'),
+        (Join-Path $HomeDir '.localingy.exe')
+    )) { if ($c -and (Test-Path $c)) { $agy = $c; break } }
+    foreach ($c in @(
+        (Join-Path $env:APPDATA 'npm\codex.cmd'),
+        (Join-Path $HomeDir '.localin\codex.exe')
+    )) { if ($c -and (Test-Path $c)) { $codex = $c; break } }
+    if (-not $codex) {
+        $found = Get-Command codex -ErrorAction SilentlyContinue
+        if ($found) { $codex = $found.Source }
+    }
+    return @{ Agy = $agy; Codex = $codex }
+}
+
+$TrioEnabled = $false
+Show-QHeader 21
+$trioTools = Find-TrioTools
+if ($trioTools.Agy -or $trioTools.Codex) {
+    if ($trioTools.Agy)   { Write-Step ("Antigravity: {0}" -f $trioTools.Agy) }
+    if ($trioTools.Codex) { Write-Step ("Codex: {0}" -f $trioTools.Codex) }
+    $TrioEnabled = Ask-YesNo -Question (T 'f21_q') -DefaultYes $true -Explain (T 'f21_x')
+} else {
+    Write-Note (T 'f21_none')
+}
+
+# ── F22: Rebuild existing configuration ──
+#
+# The analysis runs BEFORE the question. Offering "delete everything" without
+# first checking what would be deleted is how people lose handwritten rules
+# that were never in version control.
+$ConfigReset = $false
+Show-QHeader 22
+$analyzer = Join-Path $TrioSrc 'analyze-claude-md.mjs'
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+if ((Test-Path $analyzer) -and $nodeCmd) {
+    Write-Step (T 'f22_analyzing')
+    Write-Host ""
+    $lang = if ($f1 -eq 1) { 'de' } else { 'en' }
+    & node $analyzer '--lang' $lang '--home' $HomeDir
+    $recJson = (& node $analyzer '--json' '--home' $HomeDir) -join "`n"
+    $rec = 'review'
+    if ($recJson -match '"recommendation"\s*:\s*"([a-z]+)"') { $rec = $Matches[1] }
+    switch ($rec) {
+        'reset'  { Write-Step (T 'f22_rec_reset') }
+        'merge'  { Write-Warn2 (T 'f22_rec_merge') }
+        'review' { Write-Note (T 'f22_rec_review') }
+    }
+    Write-Host ""
+    # Default follows the analysis: only pre-select "yes" when a reset is safe.
+    $def = ($rec -eq 'reset' -or $rec -eq 'fresh')
+    $ConfigReset = Ask-YesNo -Question (T 'f22_ask') -DefaultYes $def -Explain (T 'f22_x')
+} else {
+    Write-Note 'node not found - skipping configuration analysis.'
+}
+
 #endregion
 
 #region ── Summary + confirmation ────────────────────────────────────────────
@@ -871,6 +972,8 @@ if ($ProjectName) {
 }
 Write-Host ("  {0,-24} {1}" -f ((T 'sum_update') + ':'),  (Format-YesNo $UpdateCheckEnabled))
 Write-Host ("  {0,-24} {1}" -f ((T 'sum_skills') + ':'),  (Format-YesNo $InstallSkills))
+Write-Host ("  {0,-24} {1}" -f ((T 'sum_trio') + ':'),    (Format-YesNo $TrioEnabled))
+Write-Host ("  {0,-24} {1}" -f ((T 'sum_reset') + ':'),   (Format-YesNo $ConfigReset))
 
 $confirmed = Ask-YesNo -Question (T 'sum_confirm') -DefaultYes $true
 if (-not $confirmed) {
@@ -910,27 +1013,27 @@ if ($ExperienceKey -eq 'beginner') {
 $RoutingTable =
     '| Task | Model | Launch |' + $NL +
     '|---|---|---|' + $NL +
-    '| Formatting, renaming, simple edits | Haiku 4.5 | `claude --model claude-haiku-4-5-20251001` |' + $NL +
-    '| Standard development work | Sonnet 5 | `claude --model claude-sonnet-5` |' + $NL +
-    '| Architecture, security, complex multi-file work | Opus 4.8 | `claude --model claude-opus-4-8` |' + $NL +
-    '| Hardest problems, top-tier reasoning | Fable 5 | `claude --model claude-fable-5` |' + $NL + $NL +
+    '| Formatting, renaming, simple edits | Haiku | `claude --model haiku` |' + $NL +
+    '| Standard development work | Sonnet | `claude --model sonnet` |' + $NL +
+    '| Architecture, security, complex multi-file work | Opus | `claude --model opus` |' + $NL +
+    '| Hardest problems, top-tier reasoning | Opus (1M context) | `claude --model opus[1m]` |' + $NL + $NL +
     '(Fable access depends on your plan.)'
 
 switch ($ModelKey) {
     'haiku' {
-        $ModelSection = "Current model: **Haiku 4.5**." + $NL + $NL + $RoutingTable + $NL + $NL +
+        $ModelSection = "Current model: **Haiku**." + $NL + $NL + $RoutingTable + $NL + $NL +
             '**Note:** For architecture, security, or multi-file work, start a session with a stronger model.'
     }
     'opus' {
-        $ModelSection = "Current model: **Opus 4.8**." + $NL + $NL + $RoutingTable + $NL + $NL +
+        $ModelSection = "Current model: **Opus**." + $NL + $NL + $RoutingTable + $NL + $NL +
             'You are running a top-tier model - delegate mechanical bulk work to cheaper agent models (Haiku) where sensible.'
     }
     'fable' {
-        $ModelSection = "Current model: **Fable 5**." + $NL + $NL + $RoutingTable + $NL + $NL +
+        $ModelSection = "Current model: **Opus (1M context)**." + $NL + $NL + $RoutingTable + $NL + $NL +
             'You are running a top-tier model - delegate mechanical bulk work to cheaper agent models (Haiku) where sensible.'
     }
     'sonnet' {
-        $ModelSection = "Current model: **Sonnet 5**." + $NL + $NL + $RoutingTable
+        $ModelSection = "Current model: **Sonnet**." + $NL + $NL + $RoutingTable
     }
     default {
         $ModelSection = $RoutingTable + $NL + $NL +
@@ -1123,6 +1226,37 @@ function Build-ClaudeMd {
     # Normalize to LF while building; Write-Utf8NoBom writes it back as-is.
     $content = $content.Replace("`r`n", "`n")
 
+    # Trio block for the generated CLAUDE.md. Empty when the user declined, so
+    # the whole section disappears instead of leaving an empty heading behind.
+    $TrioSection = ''
+    if ($TrioEnabled) {
+        $TrioSection = @'
+## The Trio (Codex + Antigravity)
+
+Two more CLI agents can work on this machine: **Codex** (OpenAI) and
+**Antigravity** (Google). Both bill through existing subscriptions - no API key,
+no per-token cost.
+
+**You are the approving authority.** Every tool call the others make passes
+through `~/.claude/brain/trio/broker.mjs`, whose policy you maintain. Never grant
+blanket permissions and never use `--dangerously-skip-permissions`.
+
+Propose the trio when a task spans more than ~10 files, when genuinely
+independent workstreams exist, or when a decision is hard enough that an
+opposing view is worth the wait. Advise against it for projects under ~20 files,
+projects without tests, or anything finishable alone in under 15 minutes.
+
+```bash
+node ~/.claude/brain/trio/trio.mjs doctor
+node ~/.claude/brain/trio/trio.mjs council "question"
+```
+
+Type `/CLIcombo` to convert a project - it analyses first, then assigns roles.
+
+See `/brain-trio-orchestration` and `/brain-permission-broker`.
+'@
+    }
+
     $replacements = @{
         '{{USER_NAME}}'           = $UserName
         '{{LANGUAGE_NAME}}'       = $LanguageName
@@ -1149,6 +1283,7 @@ function Build-ClaudeMd {
         '{{MARKETING_SUPPORT}}'   = $MarketingBlock
         '{{FIVEM_SUPPORT}}'       = $FivemBlock
         '{{SELECTED_SKILLS}}'     = $SelectedSkills
+        '{{TRIO_SECTION}}'        = $TrioSection
     }
 
     # First replace all non-empty values, then remove entire lines that still
@@ -1469,6 +1604,32 @@ if (Test-Path -LiteralPath $V1ClaudeMd) {
     } else {
         Write-Warn2 (T 'mig_warn')
     }
+}
+
+# ── Step 7b: commands + Trio ─────────────────────────────────────────────────
+
+# Slash commands (e.g. /CLIcombo) live in ~/.claude/commands/
+if (Test-Path $CommandsSrc) {
+    Ensure-Dir $CommandsDest
+    $cmdCount = 0
+    Get-ChildItem -Path $CommandsSrc -Filter '*.md' -File -ErrorAction SilentlyContinue | ForEach-Object {
+        $dest = Join-Path $CommandsDest $_.Name
+        Backup-File $dest
+        Copy-Item $_.FullName $dest -Force
+        $cmdCount++
+    }
+    if ($cmdCount -gt 0) { Write-Step ((T 'wr_commands') -f $CommandsDest) }
+}
+
+# The Trio installer does its own detection, backups and verification.
+$trioInstaller = Join-Path $TrioSrc 'install.mjs'
+if ($TrioEnabled -and (Test-Path $trioInstaller) -and (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Host ""
+    $trioLang = if ($f1 -eq 1) { 'de' } else { 'en' }
+    & node $trioInstaller '--yes' '--lang' $trioLang '--home' $HomeDir
+    if ($LASTEXITCODE -eq 0) { Write-Step (T 'wr_trio') } else { Write-Warn2 (T 'wr_trio_fail') }
+} elseif (-not $TrioEnabled) {
+    Write-Step (T 'wr_trio_skip')
 }
 
 # ── Step 8: final screen ─────────────────────────────────────────────────────

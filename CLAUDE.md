@@ -42,11 +42,16 @@ These apply in every session, regardless of which model runs it.
 **Claude cannot switch models mid-session.** The model is fixed at launch.
 
 ```bash
-claude --model claude-haiku-4-5-20251001   # Simple edits, formatting, renaming
-claude --model claude-sonnet-5              # Standard development (good default)
-claude --model claude-opus-4-8              # Architecture, security, complex multi-file work
-claude --model claude-fable-5               # Top-tier model (availability depends on your plan)
+claude --model haiku      # Simple edits, formatting, renaming
+claude --model sonnet     # Standard development (good default)
+claude --model opus       # Architecture, security, complex multi-file work
+claude --model opus[1m]   # Same, with the extended context window
 ```
+
+Use the **aliases**, not dated model IDs. Aliases always resolve to the current
+release; a pinned ID like `claude-opus-4-8` silently becomes wrong the moment a
+new version ships, and nothing warns you. Run `/model` inside a session to see
+what is actually active.
 
 If a task outgrows the current session, use `/create_handoff`, end the session, and start a new one with the right model.
 
@@ -82,6 +87,8 @@ Bundled Brain skills (install with `setup.sh`/`setup.ps1` or `install.sh --with-
 - `/brain-ruflo-orchestration` — when and how to use multi-agent workflows
 - `/brain-skill-authoring` — guide for writing new Brain skills
 - `/brain-github-release` — checklist for a public GitHub release
+- `/brain-trio-orchestration` — working with Codex and Antigravity
+- `/brain-permission-broker` — how Claude governs the other agents
 - `/brain-update` — check for and apply Claude Brain updates
 
 Optional bundled skills:
@@ -141,6 +148,37 @@ Agents: `planner`, `architect`, `code-reviewer`, `security-reviewer`, `tdd-guide
 Rule: if you can finish the task alone in under 15 minutes, skip the agents.
 
 See `docs/RUFLO_ORCHESTRATION.md`.
+
+## The Trio (Codex + Antigravity)
+
+Two more CLI agents can work on the same project: **Codex** (OpenAI) and
+**Antigravity** (Google). Both bill through existing subscriptions — no API key,
+no per-token cost.
+
+**Claude is the approving authority.** Every tool call the others make passes
+through a permission broker whose policy Claude maintains. Blanket permissions
+are never granted.
+
+Propose the trio when you notice:
+- A task spans more than roughly 10 files
+- Genuinely independent workstreams exist
+- The project has a real test suite (the acceptance gate needs one)
+- A decision is hard enough that an opposing view is worth the wait
+- Bulk mechanical work is coming (translations, migrations, boilerplate)
+
+Advise **against** it when the project has fewer than ~20 files, has no tests,
+or the task is something you can finish alone in under 15 minutes. The
+coordination overhead is real.
+
+```bash
+node ~/.claude/brain/trio/trio.mjs doctor
+node ~/.claude/brain/trio/trio.mjs council "question"   # both models, in parallel
+```
+
+Type `/CLIcombo` to convert the current project — it analyses the project first,
+then assigns roles that fit it.
+
+See `/brain-trio-orchestration`, `/brain-permission-broker`, `docs/TRIO.md`.
 
 ## Token Efficiency
 

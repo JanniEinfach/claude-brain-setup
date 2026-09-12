@@ -6,12 +6,12 @@ Practical rules to keep token costs under control. No magic — just habits.
 
 ### 1. Pick the right model before starting
 
-Using Opus 4.8 or Fable 5 when Sonnet 5 would do costs several times more per token. Using Sonnet when Haiku 4.5 would do wastes money too. See `MODEL_ROUTING.md` for the Claude 5 family decision table.
+Using Opus or Opus (1M context) when Sonnet would do costs several times more per token. Using Sonnet when Haiku would do wastes money too. See `MODEL_ROUTING.md` for the Claude 5 family decision table.
 
 ```bash
-claude --model claude-haiku-4-5-20251001   # Simple, bounded tasks
-claude --model claude-sonnet-5             # Standard development
-claude --model claude-opus-4-8             # Architecture, security, complex work
+claude --model haiku   # Simple, bounded tasks
+claude --model sonnet             # Standard development
+claude --model opus             # Architecture, security, complex work
 ```
 
 ### 2. Do not resume huge sessions

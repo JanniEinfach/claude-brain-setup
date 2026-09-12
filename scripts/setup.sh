@@ -62,6 +62,9 @@ TEMPLATE_FILE="$PROJECT_ROOT/templates/CLAUDE.template.md"
 VAULT_TPL_ROOT="$PROJECT_ROOT/templates/obsidian"
 SKILLS_SRC="$PROJECT_ROOT/skills"
 DOCS_SRC="$PROJECT_ROOT/docs"
+TRIO_SRC="$PROJECT_ROOT/brain/trio"
+COMMANDS_SRC="$PROJECT_ROOT/commands"
+COMMANDS_DEST="$CLAUDE_DIR/commands"
 VERSION_FILE="$PROJECT_ROOT/VERSION"
 
 REPO_SLUG='JanniEinfach/claude-brain-setup'
@@ -356,7 +359,7 @@ T() {
       too_short_generic) printf '%s' 'Bitte gib etwas mehr Text ein.' ;;
       yn_default_yes)    printf '%s' '[J/n]' ;;
       yn_default_no)     printf '%s' '[j/N]' ;;
-      q_of)              printf '%s' 'Frage %s von 20' ;;
+      q_of)              printf '%s' 'Frage %s von 22' ;;
       backed_up)         printf '%s' 'Backup: %s -> %s' ;;
 
       f2_q) printf '%s' 'Wie soll Claude dich nennen?' ;;
@@ -430,6 +433,25 @@ T() {
       f20_q) printf '%s' 'Brain-Skills installieren?' ;;
       f20_x) printf '%s' 'Skills sind fertige Arbeitsanleitungen fuer Claude (z. B. ein Sicherheits-Check). Reine Textdateien, fuehren nichts von selbst aus.' ;;
 
+      f21_q) printf '%s' 'Codex und Antigravity mit einbinden?' ;;
+      f21_x) printf '%s' 'Du kannst neben Claude noch zwei weitere KI-Kommandozeilen nutzen: Codex (von OpenAI) und Antigravity (von Google). Beide laufen ueber dein jeweiliges Abo - es entstehen KEINE zusaetzlichen Kosten und du brauchst keinen API-Schluessel. Claude bleibt der Chef und entscheidet, was die beiden duerfen. Wenn eines der Programme nicht installiert ist, wird es einfach uebersprungen.' ;;
+      f21_none) printf '%s' 'Weder Codex noch Antigravity gefunden - Frage wird uebersprungen.' ;;
+
+      f22_q) printf '%s' 'Bestehende Konfiguration komplett neu aufbauen?' ;;
+      f22_x) printf '%s' 'Wenn du schon eine CLAUDE.md hast, kann das Setup sie entweder ergaenzen oder komplett neu schreiben. Neu schreiben ist sauberer, verliert aber alles Selbstgeschriebene. Ich sehe gleich nach, was bei dir liegt, und sage dir ehrlich, was sinnvoller ist. In beiden Faellen wird vorher eine datierte Sicherung angelegt - es geht nie etwas verloren.' ;;
+      f22_analyzing) printf '%s' 'Ich sehe mir deine bestehende Konfiguration an ...' ;;
+      f22_rec_reset) printf '%s' 'Meine Empfehlung: Neu aufbauen. Es geht nichts Wertvolles verloren.' ;;
+      f22_rec_merge) printf '%s' 'Meine Empfehlung: BEHALTEN und ergaenzen. Du hast selbstgeschriebene Inhalte, die beim Neuaufbau verloren gingen.' ;;
+      f22_rec_review) printf '%s' 'Kein klarer Fall. Sieh dir die Datei selbst an, bevor du entscheidest.' ;;
+      f22_ask) printf '%s' 'Trotzdem komplett neu aufbauen?' ;;
+
+      sum_trio)  printf '%s' 'Codex + Antigravity' ;;
+      sum_reset) printf '%s' 'Konfiguration neu' ;;
+      wr_commands) printf '%s' 'Befehle installiert: %s' ;;
+      wr_trio)     printf '%s' 'Trio eingerichtet - Claude ist die Genehmigungsinstanz' ;;
+      wr_trio_skip) printf '%s' 'Trio uebersprungen' ;;
+      wr_trio_fail) printf '%s' 'Trio-Einrichtung meldete einen Fehler - siehe Ausgabe oben' ;;
+
       sum_title)    printf '%s' 'Zusammenfassung deiner Antworten' ;;
       sum_confirm)  printf '%s' 'Passt das?' ;;
       sum_abort)    printf '%s' 'Alles klar - es wurde nichts geschrieben. Starte das Setup einfach neu, wenn du bereit bist.' ;;
@@ -502,7 +524,7 @@ T() {
       too_short_generic) printf '%s' 'Please enter a bit more text.' ;;
       yn_default_yes)    printf '%s' '[Y/n]' ;;
       yn_default_no)     printf '%s' '[y/N]' ;;
-      q_of)              printf '%s' 'Question %s of 20' ;;
+      q_of)              printf '%s' 'Question %s of 22' ;;
       backed_up)         printf '%s' 'Backup: %s -> %s' ;;
 
       f2_q) printf '%s' 'What should Claude call you?' ;;
@@ -575,6 +597,25 @@ T() {
 
       f20_q) printf '%s' 'Install the Brain skills?' ;;
       f20_x) printf '%s' 'Skills are ready-made work instructions for Claude (e.g. a security check). Plain text files - they never execute anything by themselves.' ;;
+
+      f21_q) printf '%s' 'Wire in Codex and Antigravity?' ;;
+      f21_x) printf '%s' 'Alongside Claude you can use two more AI command lines: Codex (OpenAI) and Antigravity (Google). Both bill through your existing subscription - there are NO extra costs and no API key is needed. Claude stays in charge and decides what the other two are allowed to do. If a tool is not installed it is simply skipped.' ;;
+      f21_none) printf '%s' 'Neither Codex nor Antigravity found - skipping this question.' ;;
+
+      f22_q) printf '%s' 'Rebuild an existing configuration from scratch?' ;;
+      f22_x) printf '%s' 'If you already have a CLAUDE.md, setup can either extend it or rewrite it completely. Rewriting is cleaner but loses anything you wrote yourself. I will look at what you have and tell you honestly which makes more sense. Either way a timestamped backup is written first - nothing is ever lost.' ;;
+      f22_analyzing) printf '%s' 'Looking at your existing configuration ...' ;;
+      f22_rec_reset) printf '%s' 'My recommendation: rebuild. Nothing of value is lost.' ;;
+      f22_rec_merge) printf '%s' 'My recommendation: KEEP and extend. You have handwritten content that a rebuild would destroy.' ;;
+      f22_rec_review) printf '%s' 'No clear call. Read the file yourself before deciding.' ;;
+      f22_ask) printf '%s' 'Rebuild completely anyway?' ;;
+
+      sum_trio)  printf '%s' 'Codex + Antigravity' ;;
+      sum_reset) printf '%s' 'Rebuild config' ;;
+      wr_commands) printf '%s' 'Commands installed: %s' ;;
+      wr_trio)     printf '%s' 'Trio wired up - Claude is the approving authority' ;;
+      wr_trio_skip) printf '%s' 'Trio skipped' ;;
+      wr_trio_fail) printf '%s' 'Trio setup reported an error - see the output above' ;;
 
       sum_title)    printf '%s' 'Summary of your answers' ;;
       sum_confirm)  printf '%s' 'Does this look right?' ;;
@@ -965,6 +1006,62 @@ show_qheader 20
 ask_yesno "$(T f20_q)" 1 "$(T f20_x)"
 INSTALL_SKILLS="$YESNO"
 
+# ── F21: Trio (Codex + Antigravity) ──
+#
+# Only asked when at least one of the two is actually installed. Offering to
+# wire up software the user does not have is noise, and a "yes" would silently
+# do nothing.
+detect_trio_tools() {
+  TRIO_AGY=''
+  TRIO_CODEX=''
+  for c in     "${AGY_BIN:-}"     "${LOCALAPPDATA:-$HOME_DIR/AppData/Local}/agy/bin/agy.exe"     "$HOME_DIR/.local/bin/agy"     "/usr/local/bin/agy"; do
+    if [ -n "$c" ] && [ -x "$c" ]; then TRIO_AGY="$c"; break; fi
+  done
+  for c in     "${APPDATA:-$HOME_DIR/AppData/Roaming}/npm/codex.cmd"     "$HOME_DIR/.local/bin/codex"     "/usr/local/bin/codex"     "/opt/homebrew/bin/codex"; do
+    if [ -n "$c" ] && [ -x "$c" ]; then TRIO_CODEX="$c"; break; fi
+  done
+  command -v codex >/dev/null 2>&1 && [ -z "$TRIO_CODEX" ] && TRIO_CODEX="$(command -v codex)"
+  [ -n "$TRIO_AGY" ] || [ -n "$TRIO_CODEX" ]
+}
+
+TRIO_ENABLED=0
+show_qheader 21
+if detect_trio_tools; then
+  [ -n "$TRIO_AGY" ]   && write_step "Antigravity: $TRIO_AGY"
+  [ -n "$TRIO_CODEX" ] && write_step "Codex: $TRIO_CODEX"
+  ask_yesno "$(T f21_q)" 1 "$(T f21_x)"
+  TRIO_ENABLED="$YESNO"
+else
+  write_note "$(T f21_none)"
+fi
+
+# ── F22: Rebuild existing configuration ──
+#
+# The analysis runs BEFORE the question. Offering "delete everything" without
+# first checking what would be deleted is how people lose handwritten rules
+# that were never in version control.
+CONFIG_RESET=0
+show_qheader 22
+_analyzer="$PROJECT_ROOT/brain/trio/analyze-claude-md.mjs"
+if [ -f "$_analyzer" ] && command -v node >/dev/null 2>&1; then
+  write_step "$(T f22_analyzing)"
+  echo ""
+  if [ "$F1" = "1" ]; then node "$_analyzer" --lang de --home "$HOME_DIR"; else node "$_analyzer" --lang en --home "$HOME_DIR"; fi
+  _rec="$(node "$_analyzer" --json --home "$HOME_DIR" 2>/dev/null | grep -m1 '"recommendation"' | cut -d'"' -f4)"
+  case "$_rec" in
+    reset)  write_step "$(T f22_rec_reset)" ;;
+    merge)  write_warn "$(T f22_rec_merge)" ;;
+    review) write_note "$(T f22_rec_review)" ;;
+  esac
+  echo ""
+  # Default follows the analysis: only pre-select "yes" when a reset is safe.
+  if [ "$_rec" = "reset" ] || [ "$_rec" = "fresh" ]; then _def=1; else _def=0; fi
+  ask_yesno "$(T f22_ask)" "$_def" "$(T f22_x)"
+  CONFIG_RESET="$YESNO"
+else
+  write_note "node not found - skipping configuration analysis."
+fi
+
 # ── Summary + confirmation ────────────────────────────────────────────────────
 
 format_yesno() {
@@ -1005,6 +1102,8 @@ else
 fi
 sum_row "$(T sum_update)" "$(format_yesno "$UPDATE_CHECK_ENABLED")"
 sum_row "$(T sum_skills)" "$(format_yesno "$INSTALL_SKILLS")"
+sum_row "$(T sum_trio)"   "$(format_yesno "$TRIO_ENABLED")"
+sum_row "$(T sum_reset)"  "$(format_yesno "$CONFIG_RESET")"
 
 ask_yesno "$(T sum_confirm)" 1
 if [ "$YESNO" != "1" ]; then
@@ -1039,37 +1138,37 @@ fi
 # {{MODEL_SECTION}} (Claude 5 family routing table)
 ROUTING_TABLE='| Task | Model | Launch |
 |---|---|---|
-| Formatting, renaming, simple edits | Haiku 4.5 | `claude --model claude-haiku-4-5-20251001` |
-| Standard development work | Sonnet 5 | `claude --model claude-sonnet-5` |
-| Architecture, security, complex multi-file work | Opus 4.8 | `claude --model claude-opus-4-8` |
-| Hardest problems, top-tier reasoning | Fable 5 | `claude --model claude-fable-5` |
+| Formatting, renaming, simple edits | Haiku | `claude --model haiku` |
+| Standard development work | Sonnet | `claude --model sonnet` |
+| Architecture, security, complex multi-file work | Opus | `claude --model opus` |
+| Hardest problems, top-tier reasoning | Opus (1M context) | `claude --model opus[1m]` |
 
 (Fable access depends on your plan.)'
 
 case "$MODEL_KEY" in
   haiku)
-    MODEL_SECTION="Current model: **Haiku 4.5**.
+    MODEL_SECTION="Current model: **Haiku**.
 
 $ROUTING_TABLE
 
 **Note:** For architecture, security, or multi-file work, start a session with a stronger model."
     ;;
   opus)
-    MODEL_SECTION="Current model: **Opus 4.8**.
+    MODEL_SECTION="Current model: **Opus**.
 
 $ROUTING_TABLE
 
 You are running a top-tier model - delegate mechanical bulk work to cheaper agent models (Haiku) where sensible."
     ;;
   fable)
-    MODEL_SECTION="Current model: **Fable 5**.
+    MODEL_SECTION="Current model: **Opus (1M context)**.
 
 $ROUTING_TABLE
 
 You are running a top-tier model - delegate mechanical bulk work to cheaper agent models (Haiku) where sensible."
     ;;
   sonnet)
-    MODEL_SECTION="Current model: **Sonnet 5**.
+    MODEL_SECTION="Current model: **Sonnet**.
 
 $ROUTING_TABLE"
     ;;
@@ -1265,6 +1364,35 @@ fi
 
 GENERATED_CLAUDE_MD=''
 
+# Trio block for the generated CLAUDE.md. Empty when the user declined, so the
+# whole section disappears instead of leaving an empty heading behind.
+TRIO_SECTION=''
+if [ "${TRIO_ENABLED:-0}" = "1" ]; then
+  TRIO_SECTION="## The Trio (Codex + Antigravity)
+
+Two more CLI agents can work on this machine: **Codex** (OpenAI) and
+**Antigravity** (Google). Both bill through existing subscriptions - no API key,
+no per-token cost.
+
+**You are the approving authority.** Every tool call the others make passes
+through \`~/.claude/brain/trio/broker.mjs\`, whose policy you maintain. Never grant
+blanket permissions and never use \`--dangerously-skip-permissions\`.
+
+Propose the trio when a task spans more than ~10 files, when genuinely
+independent workstreams exist, or when a decision is hard enough that an
+opposing view is worth the wait. Advise against it for projects under ~20 files,
+projects without tests, or anything finishable alone in under 15 minutes.
+
+\`\`\`bash
+node ~/.claude/brain/trio/trio.mjs doctor
+node ~/.claude/brain/trio/trio.mjs council \"question\"
+\`\`\`
+
+Type \`/CLIcombo\` to convert a project - it analyses first, then assigns roles.
+
+See \`/brain-trio-orchestration\` and \`/brain-permission-broker\`."
+fi
+
 build_claude_md() {
   local content
   content="$(cat "$TEMPLATE_FILE"; printf 'x')"
@@ -1300,6 +1428,7 @@ build_claude_md() {
   ph='{{MARKETING_SUPPORT}}';   if [ -n "$MARKETING_BLOCK" ];     then content="${content//"$ph"/$MARKETING_BLOCK}"; fi
   ph='{{FIVEM_SUPPORT}}';       if [ -n "$FIVEM_BLOCK" ];         then content="${content//"$ph"/$FIVEM_BLOCK}"; fi
   ph='{{SELECTED_SKILLS}}';     if [ -n "$SELECTED_SKILLS" ];     then content="${content//"$ph"/$SELECTED_SKILLS}"; fi
+  ph='{{TRIO_SECTION}}';        if [ -n "$TRIO_SECTION" ];        then content="${content//"$ph"/$TRIO_SECTION}"; fi
 
   # Remove lines that still contain an unreplaced {{PLACEHOLDER}}.
   local out='' line re='\{\{[A-Z_]+\}\}'
@@ -1523,134 +1652,53 @@ esac
 INSTALLED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 write_config_json() {
-  if command -v python3 >/dev/null 2>&1; then
-    CB_CONFIG_PATH="$CONFIG_PATH" \
-    CB_VERSION="$BRAIN_VERSION" \
-    CB_REPO="$REPO_SLUG" \
-    CB_BRANCH="$REPO_BRANCH" \
-    CB_INSTALLED_AT="$INSTALLED_AT" \
-    CB_OS="$OS_NAME" \
-    CB_LANGUAGE="$UI_LANG" \
-    CB_USER_NAME="$USER_NAME" \
-    CB_EXPERIENCE="$EXPERIENCE_KEY" \
-    CB_MODEL="$MODEL_KEY" \
-    CB_MODEL_RAW="$MODEL_RAW" \
-    CB_PLAN_TIER="$PLAN_TIER" \
-    CB_OBSIDIAN_ENABLED="$OBSIDIAN_ENABLED" \
-    CB_VAULT_PATH="$VAULT_PATH" \
-    CB_APP_INSTALLED="$OBSIDIAN_APP_INSTALLED" \
-    CB_UPDATE_ENABLED="$UPDATE_CHECK_ENABLED" \
-    CB_CLAUDE_MD="$CLAUDE_MD_OUT" \
-    python3 <<'PYCONFIG'
-import json
-import os
-
-
-def env(key):
-    return os.environ.get(key, '')
-
-
-cfg = {
-    "version": env('CB_VERSION'),
-    "repo": env('CB_REPO'),
-    "branch": env('CB_BRANCH'),
-    "installedAt": env('CB_INSTALLED_AT'),
-    "os": env('CB_OS'),
-    "language": env('CB_LANGUAGE'),
-    "userName": env('CB_USER_NAME'),
-    "experience": env('CB_EXPERIENCE'),
-    "model": env('CB_MODEL'),
-    "modelRaw": env('CB_MODEL_RAW') or None,
-    "planTier": env('CB_PLAN_TIER'),
-    "obsidian": {
-        "enabled": env('CB_OBSIDIAN_ENABLED') == '1',
-        "vaultPath": env('CB_VAULT_PATH'),
-        "appInstalled": env('CB_APP_INSTALLED') == '1',
-    },
-    "updateCheck": {
-        "enabled": env('CB_UPDATE_ENABLED') == '1',
-        "intervalHours": 24,
-        "lastCheck": None,
-    },
-    "claudeMdPath": env('CB_CLAUDE_MD'),
-}
-with open(env('CB_CONFIG_PATH'), 'w', encoding='utf-8') as f:
-    json.dump(cfg, f, indent=2, ensure_ascii=False)
-    f.write('\n')
-PYCONFIG
-    return 0
-  fi
-
-  if command -v jq >/dev/null 2>&1; then
-    jq -n \
-      --arg version "$BRAIN_VERSION" \
-      --arg repo "$REPO_SLUG" \
-      --arg branch "$REPO_BRANCH" \
-      --arg installedAt "$INSTALLED_AT" \
-      --arg os "$OS_NAME" \
-      --arg language "$UI_LANG" \
-      --arg userName "$USER_NAME" \
-      --arg experience "$EXPERIENCE_KEY" \
-      --arg model "$MODEL_KEY" \
-      --arg modelRaw "$MODEL_RAW" \
-      --arg planTier "$PLAN_TIER" \
-      --arg vaultPath "$VAULT_PATH" \
-      --arg claudeMdPath "$CLAUDE_MD_OUT" \
-      --argjson obsidianEnabled "$(bool_json "$OBSIDIAN_ENABLED")" \
-      --argjson appInstalled "$(bool_json "$OBSIDIAN_APP_INSTALLED")" \
-      --argjson updateEnabled "$(bool_json "$UPDATE_CHECK_ENABLED")" \
-      '{
-        version: $version,
-        repo: $repo,
-        branch: $branch,
-        installedAt: $installedAt,
-        os: $os,
-        language: $language,
-        userName: $userName,
-        experience: $experience,
-        model: $model,
-        modelRaw: (if $modelRaw == "" then null else $modelRaw end),
-        planTier: $planTier,
-        obsidian: { enabled: $obsidianEnabled, vaultPath: $vaultPath, appInstalled: $appInstalled },
-        updateCheck: { enabled: $updateEnabled, intervalHours: 24, lastCheck: null },
-        claudeMdPath: $claudeMdPath
-      }' > "$CONFIG_PATH"
-    return 0
-  fi
-
-  # Fallback: hand-built JSON with escaped values (no python3, no jq).
-  local model_raw_json
+  # Written with plain shell, deliberately.
+  #
+  # v2 shelled out to python3 for this. On Windows, `python3` is usually the
+  # Microsoft Store placeholder: `command -v python3` finds it, running it exits
+  # with code 49, and the whole setup died right here without an error message.
+  # Existence is not availability.
+  #
+  # The config is a flat, known structure, so no interpreter is needed at all.
+  # json_escape() handles quoting. One dependency fewer, one failure mode fewer.
+  local modelraw_json
   if [ -n "$MODEL_RAW" ]; then
-    model_raw_json="\"$(json_escape "$MODEL_RAW")\""
+    modelraw_json="\"$(json_escape "$MODEL_RAW")\""
   else
-    model_raw_json='null'
+    modelraw_json='null'
   fi
-  {
-    printf '{\n'
-    printf '  "version": "%s",\n'     "$(json_escape "$BRAIN_VERSION")"
-    printf '  "repo": "%s",\n'        "$(json_escape "$REPO_SLUG")"
-    printf '  "branch": "%s",\n'      "$(json_escape "$REPO_BRANCH")"
-    printf '  "installedAt": "%s",\n' "$(json_escape "$INSTALLED_AT")"
-    printf '  "os": "%s",\n'          "$(json_escape "$OS_NAME")"
-    printf '  "language": "%s",\n'    "$(json_escape "$UI_LANG")"
-    printf '  "userName": "%s",\n'    "$(json_escape "$USER_NAME")"
-    printf '  "experience": "%s",\n'  "$(json_escape "$EXPERIENCE_KEY")"
-    printf '  "model": "%s",\n'       "$(json_escape "$MODEL_KEY")"
-    printf '  "modelRaw": %s,\n'      "$model_raw_json"
-    printf '  "planTier": "%s",\n'    "$(json_escape "$PLAN_TIER")"
-    printf '  "obsidian": {\n'
-    printf '    "enabled": %s,\n'     "$(bool_json "$OBSIDIAN_ENABLED")"
-    printf '    "vaultPath": "%s",\n' "$(json_escape "$VAULT_PATH")"
-    printf '    "appInstalled": %s\n' "$(bool_json "$OBSIDIAN_APP_INSTALLED")"
-    printf '  },\n'
-    printf '  "updateCheck": {\n'
-    printf '    "enabled": %s,\n'     "$(bool_json "$UPDATE_CHECK_ENABLED")"
-    printf '    "intervalHours": 24,\n'
-    printf '    "lastCheck": null\n'
-    printf '  },\n'
-    printf '  "claudeMdPath": "%s"\n' "$(json_escape "$CLAUDE_MD_OUT")"
-    printf '}\n'
-  } > "$CONFIG_PATH"
+
+  ensure_dir "$(dirname "$CONFIG_PATH")"
+  cat > "$CONFIG_PATH" <<EOFCONFIG
+{
+  "version": "$(json_escape "$BRAIN_VERSION")",
+  "repo": "$(json_escape "$REPO_SLUG")",
+  "branch": "$(json_escape "$REPO_BRANCH")",
+  "installedAt": "$(json_escape "$INSTALLED_AT")",
+  "os": "$(json_escape "$OS_NAME")",
+  "language": "$(json_escape "$UI_LANG")",
+  "userName": "$(json_escape "$USER_NAME")",
+  "experience": "$(json_escape "$EXPERIENCE_KEY")",
+  "model": "$(json_escape "$MODEL_KEY")",
+  "modelRaw": $modelraw_json,
+  "planTier": "$(json_escape "$PLAN_TIER")",
+  "trio": {
+    "enabled": $(bool_json "$TRIO_ENABLED"),
+    "broker": "$(json_escape "$BRAIN_DIR/trio/broker.mjs")"
+  },
+  "obsidian": {
+    "enabled": $(bool_json "$OBSIDIAN_ENABLED"),
+    "vaultPath": "$(json_escape "$VAULT_PATH")",
+    "appInstalled": $(bool_json "$OBSIDIAN_APP_INSTALLED")
+  },
+  "updateCheck": {
+    "enabled": $(bool_json "$UPDATE_CHECK_ENABLED"),
+    "intervalHours": 24,
+    "lastCheck": null
+  },
+  "claudeMdPath": "$(json_escape "$CLAUDE_MD_OUT")"
+}
+EOFCONFIG
 }
 
 write_config_json
@@ -1769,6 +1817,34 @@ if [ -f "$V1_CLAUDE_MD" ]; then
   else
     write_warn "$(T mig_warn)"
   fi
+fi
+
+# ── Step 7b: commands + Trio ──────────────────────────────────────────────────
+
+# Slash commands (e.g. /CLIcombo) live in ~/.claude/commands/
+if [ -d "$COMMANDS_SRC" ]; then
+  ensure_dir "$COMMANDS_DEST"
+  _cmd_count=0
+  for _cmd in "$COMMANDS_SRC"/*.md; do
+    [ -e "$_cmd" ] || continue
+    backup_file "$COMMANDS_DEST/$(basename "$_cmd")"
+    cp "$_cmd" "$COMMANDS_DEST/"
+    _cmd_count=$((_cmd_count + 1))
+  done
+  [ "$_cmd_count" -gt 0 ] && write_step "$(printf "$(T wr_commands)" "$COMMANDS_DEST")"
+fi
+
+# The Trio installer does its own detection, backups and verification.
+if [ "$TRIO_ENABLED" = "1" ] && [ -f "$TRIO_SRC/install.mjs" ] && command -v node >/dev/null 2>&1; then
+  echo ""
+  if [ "$F1" = "1" ]; then _trio_lang=de; else _trio_lang=en; fi
+  if node "$TRIO_SRC/install.mjs" --yes --lang "$_trio_lang" --home "$HOME_DIR"; then
+    write_step "$(T wr_trio)"
+  else
+    write_warn "$(T wr_trio_fail)"
+  fi
+else
+  [ "$TRIO_ENABLED" = "1" ] || write_step "$(T wr_trio_skip)"
 fi
 
 # ── Step 8: final screen ──────────────────────────────────────────────────────

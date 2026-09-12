@@ -4,6 +4,38 @@ All notable changes to this project will be documented here.
 
 Format: [Semantic Versioning](https://semver.org/). Dates are YYYY-MM-DD.
 
+## [3.0.0] — 2026-09-12
+
+Major release: Claude Brain becomes a **Trio**. Codex and Antigravity can now work on the same project, with Claude as the approving authority for everything they do.
+
+Added:
+- **Permission broker** (`brain/trio/broker.mjs`): Claude decides what the other agents may do. Registered as an Antigravity `PreToolUse` hook. A `deny` from the broker overrides any permission the tool grants itself — verified by test, not assumed. The reason text reaches the model verbatim, so a blocked agent knows why and what to do instead. `--dangerously-skip-permissions` is never used anywhere in this project.
+- **Broker test suite** (`brain/trio/broker.test.mjs`): 48 cases covering ordinary work, destruction, command chaining (`cat README.md && rm -rf /`), cost protection, self protection, loop protection, credentials, escaping the project, and fail-closed behaviour. Run it after every policy change.
+- **Default policy** (`brain/trio/policy.default.json`): deny-first ordering, protected paths, project-scoped writes. Blocks network commands (cost protection), package installs (machine protection), credential paths, the supervision files themselves (self protection), and agents starting other agents (loop protection).
+- **Trio dispatcher** (`brain/trio/trio.mjs`): `doctor`, `ask`, `review`, `council`, and a `task` workflow that runs delegated work in isolated git worktrees behind an acceptance gate (typecheck → tests → file limits → read). One cross-platform Node program instead of a `.sh`/`.ps1` pair carrying duplicate logic.
+- **Trio installer** (`brain/trio/install.mjs`): detects what is present, merges into existing hooks and permissions instead of overwriting, backs up every file it touches, and verifies itself by running the broker tests. Supports `--check`, `--yes`, `--uninstall`, `--home`.
+- **Configuration analyser** (`brain/trio/analyze-claude-md.mjs`): before offering to wipe a CLAUDE.md, the wizard reports what exists and recommends keep / rebuild / look-first. Looks at `CLAUDE.md`, `AGENTS.md` **and** `~/.claude/rules/` — an analyser that only checked `CLAUDE.md` would tell a user with a large handwritten ruleset that there is nothing to lose.
+- **`/CLIcombo` command**: converts an existing project to the trio. Analyses language, size, tests and existing rules first, then assigns roles that fit — never from a template.
+- Two skills: `brain-trio-orchestration` (role split, task specs, acceptance gate) and `brain-permission-broker` (how the supervision works, how to extend it safely). 16 bundled skills total.
+- Docs: `docs/TRIO.md`, `docs/CLI_PLUGINS.md` (plugin recommendations for both CLIs, including the warning that plugin traffic bypasses the shell policy).
+- Setup questions F21 (wire in Codex and Antigravity) and F22 (rebuild existing configuration, preceded by the analysis). Bilingual, asked only when relevant — F21 is skipped entirely when neither CLI is installed.
+- `commands/` directory, installed to `~/.claude/commands/` by both installers.
+
+Fixed:
+- **`setup.sh` died silently on Windows.** `write_config_json` called `python3`. On Windows, `python3` is usually the Microsoft Store placeholder: `command -v python3` finds it, executing it exits with code 49, and the wizard stopped there without an error message — no config, no update hook, no final screen. The function now writes JSON with plain shell using the existing `json_escape`, removing the interpreter dependency entirely.
+- `--target` was not honoured by the new components. The trio installer and the analyser now accept `--home` so a test run cannot write into the user's real configuration.
+
+Changed:
+- **Model IDs replaced with aliases** throughout docs, skills and scripts: `claude --model opus` instead of `claude --model claude-opus-4-8`. Pinned IDs silently become wrong when a new version ships and nothing warns you; aliases always resolve to the current release. `/model` inside a session shows what is actually active.
+- `CLAUDE.md` and the generated template gained a Trio section with explicit triggers for when to propose the setup — and when to advise against it (projects under ~20 files, no test suite, work finishable alone in under 15 minutes).
+- `install.sh` / `install.ps1`: five steps instead of four; commands and the trio runtime are installed unconditionally, while the wiring itself stays opt-in.
+- `docs/SKILLS.md` updated for 16 skills.
+
+Unchanged:
+- The iron rules: scripts never delete user files, every overwrite is preceded by a timestamped backup, everything installs under the home directory, no admin rights, no secrets.
+- The Obsidian Master Brain, the update system, and the bilingual wizard from 2.0.0.
+- MIT license.
+
 ## [2.0.0] — 2026-07-13
 
 Major release: Claude Brain becomes a Master Brain — persistent cross-project memory, an update system with `/brain-update`, one-line bootstrap installers, and a rebuilt bilingual beginner-proof setup wizard.

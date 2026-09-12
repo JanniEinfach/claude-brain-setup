@@ -56,3 +56,9 @@ node_modules/
 # Editor
 .idea/
 .vscode/
+
+# Trio runtime artefacts — permission decision logs and task handoffs are
+# per-machine state, never source.
+.ai/
+.agents/policy.json
+*.backup-*

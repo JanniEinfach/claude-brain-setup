@@ -45,6 +45,8 @@ $SourceClaudeMd = Join-Path $ProjectRoot 'CLAUDE.md'
 $SourceVersion  = Join-Path $ProjectRoot 'VERSION'
 $SourceSkills   = Join-Path $ProjectRoot 'skills'
 $SourceDocs     = Join-Path $ProjectRoot 'docs'
+$SourceTrio     = Join-Path $ProjectRoot 'brain	rio'
+$SourceCommands = Join-Path $ProjectRoot 'commands'
 
 $ClaudeDir      = Join-Path $env:USERPROFILE '.claude'
 $ClaudeMdDest   = Join-Path $ClaudeDir 'CLAUDE.md'
@@ -52,6 +54,8 @@ $SkillsDest     = Join-Path $ClaudeDir 'skills'
 $BrainDir       = Join-Path $ClaudeDir 'brain'
 $BrainBackups   = Join-Path $BrainDir 'backups'
 $BrainDocs      = Join-Path $BrainDir 'docs'
+$BrainTrio      = Join-Path $BrainDir 'trio'
+$CommandsDest   = Join-Path $ClaudeDir 'commands'
 $ConfigPath     = Join-Path $BrainDir 'config.json'
 $SettingsPath   = Join-Path $ClaudeDir 'settings.json'
 $V1ClaudeMd     = Join-Path $env:USERPROFILE 'CLAUDE.md'
@@ -111,7 +115,7 @@ Write-Host ""
 # ---------------------------------------------------------------------------
 
 if (-not $SkillsOnly) {
-    Write-Host "[1/4] Installing CLAUDE.md" -ForegroundColor Cyan
+    Write-Host "[1/5] Installing CLAUDE.md" -ForegroundColor Cyan
 
     if (-not (Test-Path $SourceClaudeMd)) {
         Write-Error "Source CLAUDE.md not found at: $SourceClaudeMd`nRun this script from inside the claude-brain-setup directory."
@@ -138,7 +142,7 @@ if (-not $SkillsOnly) {
     }
     Write-Host ""
 } else {
-    Write-Host "[1/4] Skipping CLAUDE.md (-SkillsOnly)" -ForegroundColor Cyan
+    Write-Host "[1/5] Skipping CLAUDE.md (-SkillsOnly)" -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -147,7 +151,7 @@ if (-not $SkillsOnly) {
 # ---------------------------------------------------------------------------
 
 if ($WithSkills) {
-    Write-Host "[2/4] Installing bundled Brain skills" -ForegroundColor Cyan
+    Write-Host "[2/5] Installing bundled Brain skills" -ForegroundColor Cyan
 
     if (-not (Test-Path $SourceSkills)) {
         Write-Warning "  skills\ directory not found at: $SourceSkills. Skipping skill install."
@@ -179,7 +183,7 @@ if ($WithSkills) {
     }
     Write-Host ""
 } else {
-    Write-Host "[2/4] Skipping skills (re-run with -WithSkills to install them)" -ForegroundColor Cyan
+    Write-Host "[2/5] Skipping skills (re-run with -WithSkills to install them)" -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -187,7 +191,7 @@ if ($WithSkills) {
 # Step 3: Brain runtime -> ~/.claude/brain/ (always)
 # ---------------------------------------------------------------------------
 
-Write-Host "[3/4] Installing Brain runtime" -ForegroundColor Cyan
+Write-Host "[3/5] Installing Brain runtime" -ForegroundColor Cyan
 
 Confirm-Directory $BrainDir
 Confirm-Directory $BrainBackups
@@ -368,13 +372,44 @@ function Register-UpdateHook {
     }
 }
 
+Write-Host "[4/5] Commands and Trio" -ForegroundColor Cyan
+
+# Slash commands (e.g. /CLIcombo)
+if (Test-Path $SourceCommands) {
+    if (-not $DryRun) { New-Item -ItemType Directory -Path $CommandsDest -Force | Out-Null }
+    $cmdCount = 0
+    Get-ChildItem -Path $SourceCommands -Filter '*.md' -File -ErrorAction SilentlyContinue | ForEach-Object {
+        if (-not $DryRun) { Copy-Item $_.FullName (Join-Path $CommandsDest $_.Name) -Force }
+        $cmdCount++
+    }
+    if ($cmdCount -gt 0) { Write-Host "  Installed $cmdCount command(s) to: $CommandsDest" }
+}
+
+# Trio runtime. Copied unconditionally so the installer is available later; the
+# wiring itself is opt-in and asks before changing anything outside this folder.
+if (Test-Path $SourceTrio) {
+    if (-not $DryRun) { New-Item -ItemType Directory -Path $BrainTrio -Force | Out-Null }
+    foreach ($f in @('broker.mjs','broker.test.mjs','trio.mjs','install.mjs','analyze-claude-md.mjs','hooks.json','policy.default.json')) {
+        $src = Join-Path $SourceTrio $f
+        if ((Test-Path $src) -and (-not $DryRun)) { Copy-Item $src (Join-Path $BrainTrio $f) -Force }
+    }
+    # Never overwrite a policy the user may have edited.
+    $policy = Join-Path $BrainTrio 'policy.json'
+    $default = Join-Path $SourceTrio 'policy.default.json'
+    if ((-not (Test-Path $policy)) -and (Test-Path $default) -and (-not $DryRun)) {
+        Copy-Item $default $policy -Force
+    }
+    Write-Host "  Trio runtime: $BrainTrio"
+    Write-Host "  To wire it up: node `"$BrainTrio\install.mjs`""
+}
+
 if ($NoUpdateCheck) {
-    Write-Host "[4/4] Skipping update hook (-NoUpdateCheck)" -ForegroundColor Cyan
+    Write-Host "[5/5] Skipping update hook (-NoUpdateCheck)" -ForegroundColor Cyan
 } elseif ($NativeScriptMissing -and -not $DryRun) {
-    Write-Host "[4/4] Update hook" -ForegroundColor Cyan
+    Write-Host "[5/5] Update hook" -ForegroundColor Cyan
     Write-Warning "  check-update.ps1 was not installed - hook registration skipped."
 } else {
-    Write-Host "[4/4] Registering daily update check (SessionStart hook)" -ForegroundColor Cyan
+    Write-Host "[5/5] Registering daily update check (SessionStart hook)" -ForegroundColor Cyan
     Confirm-Directory $ClaudeDir
     Register-UpdateHook
 }

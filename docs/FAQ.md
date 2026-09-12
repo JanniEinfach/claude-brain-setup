@@ -8,9 +8,9 @@ No. The model is fixed when you launch Claude Code with `--model`. Claude cannot
 
 During Question 7 the wizard reads `~/.claude/settings.json` and looks at the `model` field. If it finds one (e.g. a string containing `sonnet`), it asks you to confirm. If nothing is found, you pick from a menu — or choose "I don't know", in which case the generated configuration includes a tip to run `/model` inside Claude Code to find out.
 
-## What is Fable 5 and why can't I select it?
+## What is Opus (1M context) and why can't I select it?
 
-Fable 5 (`claude-fable-5`) is the flagship of the new Mythos model class. Access depends on your subscription plan. If `/model` does not list it, your plan does not include it — Opus 4.8 (`claude-opus-4-8`) is the strongest alternative.
+Opus (1M context) (`opus[1m]`) is the flagship of the new Mythos model class. Access depends on your subscription plan. If `/model` does not list it, your plan does not include it — Opus (`opus`) is the strongest alternative.
 
 ## What is the Obsidian Master Brain?
 
@@ -42,14 +42,14 @@ No. Load a skill only when you need it. Most sessions need just one or two. Load
 
 ## When should I use Opus or Fable?
 
-Use Opus 4.8 (or Fable 5, if your plan includes it) when:
+Use Opus (or Opus (1M context), if your plan includes it) when:
 
 - Designing system architecture or making broad design decisions
 - Running a security audit on auth, payment, or user data code
 - Orchestrating multiple agents for a complex parallel task
 - Doing a large cross-module refactor where missing a coupling would be costly
 
-Use Sonnet 5 for most development work. Use Haiku 4.5 for simple single-file edits and formatting.
+Use Sonnet for most development work. Use Haiku for simple single-file edits and formatting.
 
 ## Can I use this with multiple programming languages?
 

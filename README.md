@@ -13,8 +13,9 @@
 1. **Beginner-proof interactive setup** — a bilingual (German/English) wizard that explains every question in plain language, validates your answers, and even detects which Claude model you are running. You end up with a `CLAUDE.md` tailored to your name, goals, experience level, and workflow.
 2. **Obsidian Master Brain** — an optional persistent memory: a folder of plain Markdown notes where Claude records projects, decisions, and knowledge about your collaboration — across sessions and across projects. Works with or without the free [Obsidian](https://obsidian.md) app.
 3. **Automatic update notifications** — a small hook checks once per day whether a new Brain version exists on GitHub and tells you inside Claude Code. Update with a single command: `/brain-update`.
-4. **14 bundled skills** — portable Markdown instruction files for disciplined workflows, token efficiency, security reviews, session handoffs, and more. They install to `~/.claude/skills/` and never execute code on their own.
-5. **Windows, Linux, and macOS** — feature-identical PowerShell and Bash scripts. No admin rights. The scripts never delete files; every overwrite is preceded by a timestamped backup.
+4. **The Trio (new in 3.0.0)** — optionally wire in **Codex** (OpenAI) and **Antigravity** (Google) so three AI command lines work on the same project. Both bill through subscriptions you already have — no API key, no per-token cost. **Claude is the approving authority:** every tool call the others make passes through a permission broker whose policy Claude maintains. `--dangerously-skip-permissions` is never used.
+5. **16 bundled skills** — portable Markdown instruction files for disciplined workflows, token efficiency, security reviews, session handoffs, and more. They install to `~/.claude/skills/` and never execute code on their own.
+6. **Windows, Linux, and macOS** — feature-identical PowerShell and Bash scripts. No admin rights. The scripts never delete files; every overwrite is preceded by a timestamped backup.
 
 ## Quick Start
 
@@ -126,7 +127,7 @@ or manually:
 
 Updates refresh the bundled skills, the update scripts, and the docs copy. They **never** touch your personalized `CLAUDE.md`, your vault, or your settings. The previous state is backed up to `~/.claude/brain/backups/` first, so you can roll back. Full details: `docs/UPDATE.md`
 
-## Bundled Brain Skills (14)
+## Bundled Brain Skills (16)
 
 Portable Markdown instruction files — no code executes automatically. Claude Code reads a skill as context when you load it with `/skill-name` during a session.
 
@@ -149,10 +150,44 @@ Portable Markdown instruction files — no code executes automatically. Claude C
 
 The interactive setup installs them for you. Separately: `./scripts/install.sh --with-skills` / `.\scripts\install.ps1 -WithSkills`.
 
+## The Trio — Claude + Codex + Antigravity
+
+Three AI command lines on one codebase, with Claude in charge.
+
+| Tool | Strength | Billing |
+|---|---|---|
+| **Claude Code** | Long context, holds the architecture, integrates | Your Claude plan |
+| **Codex** | Unattended implementation in a sandbox; a second opinion with different blind spots | Your ChatGPT plan |
+| **Antigravity** | Very large context for repo-wide analysis | Your Google AI plan |
+
+```bash
+node ~/.claude/brain/trio/install.mjs --check    # what is present?
+node ~/.claude/brain/trio/install.mjs            # asks before each step
+
+node ~/.claude/brain/trio/trio.mjs doctor
+node ~/.claude/brain/trio/trio.mjs council "should this be a queue or a cron job?"
+```
+
+`council` asks both models the same question in parallel and lays the answers
+side by side. When they disagree, that disagreement is the actual decision
+material.
+
+Inside a Claude Code session, `/CLIcombo` converts an existing project: it
+analyses language, size, tests and existing rules **first**, then assigns roles
+that fit — never from a template.
+
+**Safety.** Claude decides what the others may do. A `deny` from the broker
+overrides any permission the tool grants itself. Network access and package
+installs are blocked (cost protection), the supervision files are untouchable
+(self protection), and no agent may start another agent (loop protection).
+48 test cases guard this: `node ~/.claude/brain/trio/broker.test.mjs`.
+
+Full guide: [docs/TRIO.md](docs/TRIO.md) · Plugins: [docs/CLI_PLUGINS.md](docs/CLI_PLUGINS.md)
+
 ## Example Session
 
 ```bash
-claude --model claude-sonnet-5
+claude --model sonnet
 # Inside the session:
 # /brain-core-workflow    — disciplined workflow before touching 3+ files
 # /brain-update           — check for Brain updates
@@ -162,19 +197,19 @@ claude --model claude-sonnet-5
 Quick edits and formatting:
 
 ```bash
-claude --model claude-haiku-4-5-20251001
+claude --model haiku
 ```
 
 Architecture, security, complex multi-file work:
 
 ```bash
-claude --model claude-opus-4-8
+claude --model opus
 ```
 
 Top-tier model (availability depends on your plan):
 
 ```bash
-claude --model claude-fable-5
+claude --model opus[1m]
 ```
 
 Model decision guide: `docs/MODEL_ROUTING.md`
@@ -204,10 +239,23 @@ claude-brain-setup/
 │   ├── bootstrap.ps1 / bootstrap.sh — one-line web installer
 │   ├── check-update.ps1 / check-update.sh — daily version check (installed as hook)
 │   └── update.ps1 / update.sh      — applies updates with backup
-├── skills/                         — 14 bundled Brain skills
+├── commands/
+│   └── CLIcombo.md                 — /CLIcombo: convert a project to the Trio
+├── brain/
+│   └── trio/                       — the Trio runtime (new in 3.0.0)
+│       ├── broker.mjs              — permission broker: Claude decides
+│       ├── broker.test.mjs         — 48 security test cases
+│       ├── policy.default.json     — default permission policy
+│       ├── hooks.json              — Antigravity PreToolUse registration
+│       ├── trio.mjs                — dispatcher: doctor / ask / review / council / task
+│       ├── install.mjs             — wires it up, merges, backs up, self-verifies
+│       └── analyze-claude-md.mjs   — analyses config before any reset is offered
+├── skills/                         — 16 bundled Brain skills
 └── docs/
-    ├── ONBOARDING_QUESTIONS.md     — all 20 setup questions explained
-    ├── MODEL_ROUTING.md            — how to pick the right model (Claude 5 family)
+    ├── TRIO.md                     — Claude + Codex + Antigravity
+    ├── CLI_PLUGINS.md              — worthwhile plugins for both CLIs
+    ├── ONBOARDING_QUESTIONS.md     — all 22 setup questions explained
+    ├── MODEL_ROUTING.md            — how to pick the right model (model aliases)
     ├── OBSIDIAN_BRAIN.md           — the Master Brain concept
     ├── UPDATE.md                   — the update system in detail
     ├── TOKEN_EFFICIENCY.md         — practical token-saving habits

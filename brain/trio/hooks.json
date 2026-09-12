@@ -1,0 +1,17 @@
+{
+  "claude-brain-broker": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node broker.mjs",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -31,6 +31,8 @@ SOURCE_CLAUDE_MD="$REPO_DIR/CLAUDE.md"
 SOURCE_VERSION="$REPO_DIR/VERSION"
 SOURCE_SKILLS="$REPO_DIR/skills"
 SOURCE_DOCS="$REPO_DIR/docs"
+SOURCE_TRIO="$REPO_DIR/brain/trio"
+SOURCE_COMMANDS="$REPO_DIR/commands"
 
 CLAUDE_DIR="$HOME/.claude"
 CLAUDE_MD_DEST="$CLAUDE_DIR/CLAUDE.md"
@@ -38,6 +40,8 @@ SKILLS_DEST="$CLAUDE_DIR/skills"
 BRAIN_DIR="$CLAUDE_DIR/brain"
 BRAIN_BACKUPS="$BRAIN_DIR/backups"
 BRAIN_DOCS="$BRAIN_DIR/docs"
+BRAIN_TRIO="$BRAIN_DIR/trio"
+COMMANDS_DEST="$CLAUDE_DIR/commands"
 CONFIG_PATH="$BRAIN_DIR/config.json"
 SETTINGS_PATH="$CLAUDE_DIR/settings.json"
 V1_CLAUDE_MD="$HOME/CLAUDE.md"
@@ -126,7 +130,7 @@ echo ""
 # ---------------------------------------------------------------------------
 
 if [ "$SKILLS_ONLY" -eq 0 ]; then
-  echo "[1/4] Installing CLAUDE.md"
+  echo "[1/5] Installing CLAUDE.md"
 
   if [ ! -f "$SOURCE_CLAUDE_MD" ]; then
     echo "Error: CLAUDE.md not found at $SOURCE_CLAUDE_MD" >&2
@@ -154,7 +158,7 @@ if [ "$SKILLS_ONLY" -eq 0 ]; then
   fi
   echo ""
 else
-  echo "[1/4] Skipping CLAUDE.md (--skills-only)"
+  echo "[1/5] Skipping CLAUDE.md (--skills-only)"
   echo ""
 fi
 
@@ -163,7 +167,7 @@ fi
 # ---------------------------------------------------------------------------
 
 if [ "$WITH_SKILLS" -eq 1 ]; then
-  echo "[2/4] Installing bundled Brain skills"
+  echo "[2/5] Installing bundled Brain skills"
 
   if [ ! -d "$SOURCE_SKILLS" ]; then
     echo "  Warning: skills/ directory not found at $SOURCE_SKILLS. Skipping skill install." >&2
@@ -196,7 +200,7 @@ if [ "$WITH_SKILLS" -eq 1 ]; then
   fi
   echo ""
 else
-  echo "[2/4] Skipping skills (re-run with --with-skills to install them)"
+  echo "[2/5] Skipping skills (re-run with --with-skills to install them)"
   echo ""
 fi
 
@@ -204,7 +208,7 @@ fi
 # Step 3: Brain runtime -> ~/.claude/brain/ (always)
 # ---------------------------------------------------------------------------
 
-echo "[3/4] Installing Brain runtime"
+echo "[3/5] Installing Brain runtime"
 
 ensure_dir "$BRAIN_DIR"
 ensure_dir "$BRAIN_BACKUPS"
@@ -477,13 +481,44 @@ register_update_hook() {
   return 0
 }
 
+echo "[4/5] Commands and Trio"
+
+# Slash commands (e.g. /CLIcombo)
+if [ -d "$SOURCE_COMMANDS" ]; then
+  mkdir -p "$COMMANDS_DEST"
+  _cmds=0
+  for _c in "$SOURCE_COMMANDS"/*.md; do
+    [ -e "$_c" ] || continue
+    cp "$_c" "$COMMANDS_DEST/"
+    _cmds=$((_cmds + 1))
+  done
+  [ "$_cmds" -gt 0 ] && echo "  Installed $_cmds command(s) to $COMMANDS_DEST"
+fi
+
+# Trio runtime. Copied unconditionally so `node ~/.claude/brain/trio/install.mjs`
+# is available later; the wiring itself is opt-in and asks before changing
+# anything outside this directory.
+if [ -d "$SOURCE_TRIO" ]; then
+  mkdir -p "$BRAIN_TRIO"
+  for _f in broker.mjs broker.test.mjs trio.mjs install.mjs analyze-claude-md.mjs hooks.json; do
+    [ -f "$SOURCE_TRIO/$_f" ] && cp "$SOURCE_TRIO/$_f" "$BRAIN_TRIO/"
+  done
+  # Never overwrite a policy the user may have edited.
+  if [ ! -f "$BRAIN_TRIO/policy.json" ] && [ -f "$SOURCE_TRIO/policy.default.json" ]; then
+    cp "$SOURCE_TRIO/policy.default.json" "$BRAIN_TRIO/policy.json"
+  fi
+  cp "$SOURCE_TRIO/policy.default.json" "$BRAIN_TRIO/" 2>/dev/null || true
+  echo "  Trio runtime: $BRAIN_TRIO"
+  echo "  To wire it up: node \"$BRAIN_TRIO/install.mjs\""
+fi
+
 if [ "$NO_UPDATE_CHECK" -eq 1 ]; then
-  echo "[4/4] Skipping update hook (--no-update-check)"
+  echo "[5/5] Skipping update hook (--no-update-check)"
 elif [ "$NATIVE_SCRIPT_MISSING" -eq 1 ] && [ "$DRY_RUN" -eq 0 ]; then
-  echo "[4/4] Update hook"
+  echo "[5/5] Update hook"
   echo "  Warning: check-update.sh was not installed — hook registration skipped." >&2
 else
-  echo "[4/4] Registering daily update check (SessionStart hook)"
+  echo "[5/5] Registering daily update check (SessionStart hook)"
   ensure_dir "$CLAUDE_DIR"
   register_update_hook
 fi

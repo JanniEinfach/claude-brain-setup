@@ -2,7 +2,7 @@
 
 Skills in `~/.claude/skills/` are loaded on demand with `/skill-name` inside a Claude Code session. Only load a skill when you need it — speculative loading wastes tokens.
 
-## Bundled Brain Skills (14)
+## Bundled Brain Skills (16)
 
 These skills are included in this repository and installed by the setup scripts (Question 20 of the wizard). They are portable, public-safe Markdown instruction files — they never execute anything by themselves.
 
@@ -29,6 +29,8 @@ Install them during setup or separately:
 | `brain-ruflo-orchestration` | Lightweight multi-agent orchestration guidance — when agents are worth their overhead | Low–Medium |
 | `brain-skill-authoring` | Guide for contributors writing new bundled Brain skills | Low |
 | `brain-github-release` | Checklist for preparing and publishing a public GitHub release | Low |
+| `brain-trio-orchestration` | **New in 3.0.0** — working with Codex and Antigravity: role split, task specs, acceptance gate | Low–Medium |
+| `brain-permission-broker` | **New in 3.0.0** — how Claude governs the other agents' permissions | Low |
 | `brain-update` | **New in 2.0.0** — check for and apply Claude Brain updates via `~/.claude/brain/update.{sh,ps1}` | Low |
 | `brain-marketing-support` | Writing guidance for sales, marketing, and SEO copy (optional) | Low |
 | `brain-fivem-development` | FiveM Lua scripting, NUI, and framework guidance (optional) | Low–Medium |

@@ -79,6 +79,8 @@ Only load a skill when you actually need it. Loading skills speculatively wastes
 
 Full list: `~/.claude/brain/docs/SKILLS.md`
 
+{{TRIO_SECTION}}
+
 ## Code Quality Gates
 
 Before marking any task done:

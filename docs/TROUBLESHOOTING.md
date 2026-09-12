@@ -49,18 +49,18 @@ The model is set at launch. It cannot change mid-session. Type `/model` inside a
 
 ```bash
 # Launch explicitly:
-claude --model claude-sonnet-5
+claude --model sonnet
 ```
 
 If no `--model` flag is used and no default is set in `settings.json`, Claude Code uses its own built-in default. To set a persistent default:
 
 ```json
 {
-  "model": "claude-sonnet-5"
+  "model": "sonnet"
 }
 ```
 
-Save this in `~/.claude/settings.json` (or start from `settings.example.json`). See `docs/MODEL_ROUTING.md` for the full Claude 5 family guide. Note: `claude-fable-5` is only available on some plans — if it is rejected, use `claude-opus-4-8`.
+Save this in `~/.claude/settings.json` (or start from `settings.example.json`). See `docs/MODEL_ROUTING.md` for the full Claude 5 family guide. Note: `opus[1m]` is only available on some plans — if it is rejected, use `opus`.
 
 ## The update hook does not fire
 
@@ -209,7 +209,7 @@ Skills listed in `docs/SKILLS.md` under "requires optional ECC skill collection"
 
 Common causes:
 
-1. **Wrong model.** Check that you are not using Opus 4.8 or Fable 5 for simple tasks.
+1. **Wrong model.** Check that you are not using Opus or Opus (1M context) for simple tasks.
 2. **Session is too large.** Use `/brain-session-handoff`, end the session, start fresh.
 3. **CLAUDE.md is too long.** Keep it under 150 lines. Move details to `docs/`.
 4. **Skills preloaded unnecessarily.** Only load skills when you actually need them.

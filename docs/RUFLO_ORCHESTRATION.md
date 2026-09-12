@@ -49,7 +49,7 @@ After implementation: run `code-reviewer`. For code touching auth, payments, or 
 
 ## Model Choice for Orchestration
 
-The orchestrating session should run on a strong model — Sonnet 5 (`claude-sonnet-5`) as the baseline, Opus 4.8 (`claude-opus-4-8`) or Fable 5 (`claude-fable-5`, plan-dependent) for complex coordination. Mechanical sub-tasks (bulk renames, formatting, boilerplate) can be delegated to cheaper models such as Haiku 4.5 (`claude-haiku-4-5-20251001`). See `docs/MODEL_ROUTING.md`.
+The orchestrating session should run on a strong model — Sonnet (`sonnet`) as the baseline, Opus (`opus`) or Opus (1M context) (`opus[1m]`, plan-dependent) for complex coordination. Mechanical sub-tasks (bulk renames, formatting, boilerplate) can be delegated to cheaper models such as Haiku (`haiku`). See `docs/MODEL_ROUTING.md`.
 
 ## Available Agents
 

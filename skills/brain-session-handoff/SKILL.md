@@ -56,7 +56,7 @@ Write the following handoff document and present it to the user. Save it to a fi
 
 Start the new session with the right model:
 ```bash
-claude --model claude-sonnet-5
+claude --model sonnet
 ```
 
 Then paste the handoff document into the first message of the new session and ask Claude to continue from where it left off.

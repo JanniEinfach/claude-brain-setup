@@ -13,8 +13,9 @@
 1. **Anfängersicheres interaktives Setup** — ein zweisprachiger Assistent (Deutsch/Englisch), der jede Frage in einfacher Sprache erklärt, deine Antworten prüft und sogar erkennt, welches Claude-Modell du gerade nutzt. Am Ende steht ein `CLAUDE.md`, das auf deinen Namen, deine Ziele, deinen Erfahrungsstand und deine Arbeitsweise zugeschnitten ist.
 2. **Obsidian Master Brain** — ein optionales Langzeitgedächtnis: ein Ordner mit einfachen Markdown-Notizen, in dem Claude Projekte, Entscheidungen und Wissen über eure Zusammenarbeit festhält — über Sessions und Projekte hinweg. Funktioniert mit und ohne die kostenlose App [Obsidian](https://obsidian.md).
 3. **Automatische Update-Benachrichtigungen** — ein kleiner Hook prüft einmal am Tag, ob es eine neue Brain-Version auf GitHub gibt, und sagt dir direkt in Claude Code Bescheid. Aktualisieren geht mit einem Befehl: `/brain-update`.
-4. **14 mitgelieferte Skills** — portable Markdown-Anleitungen für disziplinierte Workflows, Token-Effizienz, Security-Reviews, Session-Übergaben und mehr. Sie werden nach `~/.claude/skills/` installiert und führen nie von selbst Code aus.
-5. **Windows, Linux und macOS** — featuregleiche PowerShell- und Bash-Skripte. Keine Admin-Rechte nötig. Die Skripte löschen niemals Dateien; vor jedem Überschreiben wird ein Backup mit Zeitstempel angelegt.
+4. **Das Trio (neu in 3.0.0)** — auf Wunsch kommen **Codex** (OpenAI) und **Antigravity** (Google) dazu, sodass drei KI-Kommandozeilen am selben Projekt arbeiten. Beide laufen über Abos, die du ohnehin hast — kein API-Schlüssel, keine Kosten pro Token. **Claude ist die Genehmigungsinstanz:** Jeder Werkzeugaufruf der anderen läuft durch eine Prüfstelle, deren Richtlinie Claude pflegt. `--dangerously-skip-permissions` wird nirgends verwendet.
+5. **16 mitgelieferte Skills** — portable Markdown-Anleitungen für disziplinierte Workflows, Token-Effizienz, Security-Reviews, Session-Übergaben und mehr. Sie werden nach `~/.claude/skills/` installiert und führen nie von selbst Code aus.
+6. **Windows, Linux und macOS** — featuregleiche PowerShell- und Bash-Skripte. Keine Admin-Rechte nötig. Die Skripte löschen niemals Dateien; vor jedem Überschreiben wird ein Backup mit Zeitstempel angelegt.
 
 ## Schnellstart
 
@@ -126,7 +127,7 @@ oder manuell:
 
 Updates erneuern die mitgelieferten Skills, die Update-Skripte und die Docs-Kopie. Sie fassen **niemals** dein personalisiertes `CLAUDE.md`, deinen Vault oder deine Einstellungen an. Der vorherige Stand wird zuerst nach `~/.claude/brain/backups/` gesichert — Rollback jederzeit möglich. Alle Details: `docs/UPDATE.md`
 
-## Mitgelieferte Brain-Skills (14)
+## Mitgelieferte Brain-Skills (16)
 
 Portable Markdown-Anleitungen — kein Code wird automatisch ausgeführt. Claude Code liest einen Skill als Kontext, wenn du ihn in einer Session mit `/skill-name` lädst.
 
@@ -149,10 +150,45 @@ Portable Markdown-Anleitungen — kein Code wird automatisch ausgeführt. Claude
 
 Das interaktive Setup installiert sie für dich. Separat: `./scripts/install.sh --with-skills` / `.\scripts\install.ps1 -WithSkills`.
 
+## Das Trio — Claude + Codex + Antigravity
+
+Drei KI-Kommandozeilen an einer Codebasis, Claude führt.
+
+| Werkzeug | Stärke | Abrechnung |
+|---|---|---|
+| **Claude Code** | Langer Kontext, hält die Architektur, führt zusammen | Dein Claude-Abo |
+| **Codex** | Unbeaufsichtigtes Umsetzen in der Sandbox; zweite Meinung mit anderen blinden Flecken | Dein ChatGPT-Abo |
+| **Antigravity** | Sehr großer Kontext für repo-weite Analysen | Dein Google-AI-Abo |
+
+```bash
+node ~/.claude/brain/trio/install.mjs --check    # was ist vorhanden?
+node ~/.claude/brain/trio/install.mjs            # fragt vor jedem Schritt
+
+node ~/.claude/brain/trio/trio.mjs doctor
+node ~/.claude/brain/trio/trio.mjs council "Warteschlange oder Cronjob?"
+```
+
+`council` stellt beiden Modellen dieselbe Frage gleichzeitig und legt die
+Antworten nebeneinander. Wenn sie sich widersprechen, ist genau dieser
+Widerspruch die eigentliche Entscheidungsgrundlage.
+
+In einer Claude-Code-Sitzung wandelt `/CLIcombo` ein bestehendes Projekt um: Es
+analysiert **zuerst** Sprache, Größe, Tests und vorhandene Regeln und vergibt
+die Rollen erst danach passend — nie nach Schema F.
+
+**Sicherheit.** Claude entscheidet, was die anderen dürfen. Ein `deny` der
+Prüfstelle schlägt jede Berechtigung, die sich ein Werkzeug selbst erteilt.
+Netzzugriffe und Paketinstallationen sind gesperrt (Kostenschutz), die
+Aufsichtsdateien sind unantastbar (Selbstschutz), und kein Agent darf einen
+anderen starten (Schleifenschutz). 48 Testfälle sichern das ab:
+`node ~/.claude/brain/trio/broker.test.mjs`.
+
+Vollständige Anleitung: [docs/TRIO.md](docs/TRIO.md) · Plugins: [docs/CLI_PLUGINS.md](docs/CLI_PLUGINS.md)
+
 ## Beispiel-Session
 
 ```bash
-claude --model claude-sonnet-5
+claude --model sonnet
 # In der Session:
 # /brain-core-workflow    — disziplinierter Workflow, bevor 3+ Dateien angefasst werden
 # /brain-update           — auf Brain-Updates prüfen
@@ -162,19 +198,19 @@ claude --model claude-sonnet-5
 Schnelle Edits und Formatierung:
 
 ```bash
-claude --model claude-haiku-4-5-20251001
+claude --model haiku
 ```
 
 Architektur, Security, komplexe Multi-File-Arbeit:
 
 ```bash
-claude --model claude-opus-4-8
+claude --model opus
 ```
 
 Spitzenmodell (Verfügbarkeit hängt von deinem Abo ab):
 
 ```bash
-claude --model claude-fable-5
+claude --model opus[1m]
 ```
 
 Modell-Entscheidungshilfe: `docs/MODEL_ROUTING.md`
@@ -204,9 +240,22 @@ claude-brain-setup/
 │   ├── bootstrap.ps1 / bootstrap.sh — Ein-Zeilen-Webinstaller
 │   ├── check-update.ps1 / check-update.sh — täglicher Versions-Check (als Hook installiert)
 │   └── update.ps1 / update.sh      — spielt Updates mit Backup ein
-├── skills/                         — 14 mitgelieferte Brain-Skills
+├── commands/
+│   └── CLIcombo.md                 — /CLIcombo: Projekt aufs Trio umstellen
+├── brain/
+│   └── trio/                       — die Trio-Laufzeit (neu in 3.0.0)
+│       ├── broker.mjs              — Genehmigungsinstanz: Claude entscheidet
+│       ├── broker.test.mjs         — 48 Sicherheits-Testfaelle
+│       ├── policy.default.json     — Standard-Richtlinie
+│       ├── hooks.json              — Antigravity-PreToolUse-Registrierung
+│       ├── trio.mjs                — Verteiler: doctor / ask / review / council / task
+│       ├── install.mjs             — verdrahtet, fuehrt zusammen, sichert, prueft sich selbst
+│       └── analyze-claude-md.mjs   — analysiert die Konfiguration vor jedem Reset
+├── skills/                         — 16 mitgelieferte Brain-Skills
 └── docs/
-    ├── ONBOARDING_QUESTIONS.md     — alle 20 Setup-Fragen erklärt
+    ├── TRIO.md                     — Claude + Codex + Antigravity
+    ├── CLI_PLUGINS.md              — sinnvolle Plugins für beide CLIs
+    ├── ONBOARDING_QUESTIONS.md     — alle 22 Setup-Fragen erklärt
     ├── MODEL_ROUTING.md            — das richtige Modell wählen (Claude-5-Familie)
     ├── OBSIDIAN_BRAIN.md           — das Master-Brain-Konzept
     ├── UPDATE.md                   — das Update-System im Detail

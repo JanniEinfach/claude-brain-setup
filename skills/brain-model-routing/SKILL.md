@@ -22,10 +22,10 @@ Claude cannot change models mid-session. Choosing the wrong model means either a
 
 | Model | Flag | Use when |
 |-------|------|----------|
-| Haiku | `--model claude-haiku-4-5-20251001` | Formatting, renaming, single-file trivial edits, simple config changes |
-| Sonnet | `--model claude-sonnet-5` | Standard development, multi-file features, debugging, most tasks |
-| Opus | `--model claude-opus-4-8` | Architecture decisions, security audits, complex multi-file work, when Sonnet is struggling |
-| Fable | `--model claude-fable-5` | The hardest problems: deep architecture, difficult debugging, work where even Opus struggles. Access depends on your plan |
+| Haiku | `--model haiku` | Formatting, renaming, single-file trivial edits, simple config changes |
+| Sonnet | `--model sonnet` | Standard development, multi-file features, debugging, most tasks |
+| Opus | `--model opus` | Architecture decisions, security audits, complex multi-file work, when Sonnet is struggling |
+| Fable | `--model opus[1m]` | The hardest problems: deep architecture, difficult debugging, work where even Opus struggles. Access depends on your plan |
 
 **Cost relationship**
 
@@ -36,10 +36,10 @@ Haiku is cheapest. Sonnet costs roughly 5x Haiku. Opus costs roughly 15x Haiku. 
 **Shell aliases (add to ~/.bashrc or ~/.zshrc)**
 
 ```bash
-alias cc='claude --model claude-sonnet-5'
-alias cch='claude --model claude-haiku-4-5-20251001'
-alias cco='claude --model claude-opus-4-8'
-alias ccf='claude --model claude-fable-5'
+alias cc='claude --model sonnet'
+alias cch='claude --model haiku'
+alias cco='claude --model opus'
+alias ccf='claude --model opus[1m]'
 ```
 
 **Escalation path when the session model is not enough**

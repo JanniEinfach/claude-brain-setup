@@ -75,12 +75,24 @@ const CODEX = findCodex()
  * through cmd.exe with /c keeps proper argument handling.
  */
 function run(bin, args, options = {}) {
-  const base = { encoding: 'utf8', input: '', ...options }
+  const base = { encoding: 'utf8', input: '', maxBuffer: 32 * 1024 * 1024, ...options }
   if (IS_WINDOWS && /\.(cmd|bat)$/i.test(bin || '')) {
     const comspec = process.env.ComSpec || 'cmd.exe'
     return spawnSync(comspec, ['/d', '/s', '/c', bin, ...args], base)
   }
   return spawnSync(bin, args, base)
+}
+
+/**
+ * Runs codex with the prompt on stdin instead of as an argument.
+ *
+ * Windows caps a command line at roughly 8191 characters. A prompt carrying
+ * project rules and file contents blows past that instantly, and codex answers
+ * only "The command line is too long" - it never sees the task at all.
+ * `codex exec -` reads the instruction from stdin, which has no such limit.
+ */
+function runCodex(args, prompt, options = {}) {
+  return run(CODEX, [...args, '-'], { ...options, input: prompt })
 }
 
 /** npm is npm.cmd on Windows and needs the same treatment. */
@@ -222,8 +234,8 @@ function cmdReview(target) {
     'MEDIUM, LOW. No style remarks.'
 
   say(`>  Codex is reviewing ${target} ...`)
-  const result = run(CODEX, ['exec', '--sandbox', 'read-only', '--skip-git-repo-check', prompt], {
-    stdio: 'inherit',
+  const result = runCodex(['exec', '--sandbox', 'read-only', '--skip-git-repo-check'], prompt, {
+    stdio: ['pipe', 'inherit', 'inherit'],
   })
   process.exit(result.status ?? 0)
 }
@@ -253,7 +265,7 @@ function cmdCouncil(question) {
   if (CODEX) {
     jobs.push({
       name: 'codex',
-      result: run(CODEX, ['exec', '--sandbox', 'read-only', '--skip-git-repo-check', prompt]),
+      result: runCodex(['exec', '--sandbox', 'read-only', '--skip-git-repo-check'], prompt),
     })
   }
   if (jobs.length === 0) die('Neither Antigravity nor Codex is available.')
@@ -317,7 +329,10 @@ function cmdTaskRun(id) {
   say(`>  Starting ${agent} for ${id} ...`)
   if (agent === 'codex') {
     if (!CODEX) die('Codex not found.')
-    run(CODEX, ['exec', '--full-auto', '--skip-git-repo-check', prompt], { cwd: tree, stdio: 'inherit' })
+    runCodex(['exec', '--full-auto', '--skip-git-repo-check'], prompt, {
+      cwd: tree,
+      stdio: ['pipe', 'inherit', 'inherit'],
+    })
   } else if (agent === 'antigravity' || agent === 'agy') {
     if (!AGY) die('Antigravity not found.')
     run(AGY, ['-p', prompt, '--mode', 'accept-edits', '--sandbox', '--effort', 'high', '--add-dir', tree],
